@@ -1,4 +1,4 @@
 
 
-server:
-	python http.server 
+run:
+	python -m http.server 8888
