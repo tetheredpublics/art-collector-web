@@ -1,0 +1,333 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+* {
+    box-sizing: border-box
+}
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+img {
+    max-width: 100%;
+}
+
+
+/* HTML5 display-role reset for older browsers */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+:root {
+    --tp-pink: #F8DFDB;
+    --tp-pink-dim: #F7D9D4;
+    --tp-red: #FF2D55;
+    --tp-black: #000;
+    --space-xs: 8px;
+    --space-s: 16px;
+    --space-m: 24px;
+    --space-l: 32px;
+    --space-xl: 48px;
+    --space-xxl: 64px;
+    --global-margin: clamp(16px, 4vw, 48px);
+}
+
+html {
+    font-weight: 400;
+    font-style: normal;
+    font-size: 12.4;
+    line-height: 1.33;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+.article {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 2;
+    margin: auto;
+}
+
+p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-weight: 500;
+    opacity: 0.84;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    /* margin: 2rem 0 1.5rem; */
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+h1 {
+    margin-top: 0;
+    font-size: 3.052rem;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 2.441rem;
+}
+
+h3 {
+    font-size: 1.953rem;
+}
+
+h4 {
+    font-size: 1.563rem;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+small,
+.text_small {
+    font-size: 0.8rem;
+}
+
+ul ul,
+ol ol,
+ul ol,
+ol ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+
+/* Let's make sure all's aligned */
+
+hr,
+.hr {
+    border: 1px solid;
+    margin: -1px 0 1.5rem 0;
+    opacity: 0.32;
+}
+
+b,
+i,
+strong,
+em,
+small,
+code {
+    line-height: 0;
+}
+
+sub,
+sup {
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+a {
+    text-decoration: none;
+    color: initial;
+    cursor: pointer !important;
+}
+
+/* MARK: CSS Start */
+html, body {
+    background-color: #FCB900;
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 0;
+}
+
+main {
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 64px 16px;
+    background-color: #FCB900;
+}
+
+.content {
+    width: 600px;
+    max-width: 100%;
+    text-align: center;
+    background-color: #fff;
+    padding: 32px;
+    border-radius: 5.6px;
+}
+
+h1 {
+    font-family: 'VT323', monospace;
+    text-align: left;
+}
+h2 {
+    font-size: 14.2px;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+p {
+    font-size: 12.4px;
+    line-height: 1.5rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+.signup-btn {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5.6px;
+    padding: 12px 24px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.signup-btn:active {
+    opacity: 0.5;
+}
+
+img {
+    max-width: 100%;
+}
+
+.text-content {
+    margin-top: 1.5rem;
+}
