@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer base {
+
+    a {
+        cursor: pointer;
+    }
+
+    .landscape-background {
+        background-color: theme('colors.specialBackground');
+        min-height: 90vh;
+        background-image: url('images/landscape-clear-sm.png');
+        background-repeat: repeat-x;
+        background-position: bottom;
+        background-size: auto 120px;
+    }
+}
+
+@layer components {
+  .box-display {
+    background-color: theme('colors.white');
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.22);
+    /* box-shadow: theme('boxShadow.xl'); */
+    -webkit-box-shadow: 0px 6px 0px 0px theme('colors.link');
+    -moz-box-shadow: 0px 6px 0px 0px theme('colors.link');
+    box-shadow: 0px 6px 0px 0px theme('colors.link');
+  }
+}
