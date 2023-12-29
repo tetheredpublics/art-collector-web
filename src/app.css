@@ -12,7 +12,7 @@
     .landscape-background {
         background-color: theme('colors.specialBackground');
         min-height: 90vh;
-        background-image: url('images/landscape-clear-sm.png');
+        background-image: url('./images/landscape-clear-sm.png');
         background-repeat: repeat-x;
         background-position: bottom;
         background-size: auto 120px;

@@ -45,7 +45,7 @@
     }
 
 </script>
-<main class="landscape-background center">
+<main class="landscape-background center" style="background-image: url('./images/landscape-clear-sm.png');">
     <div class="flex sm:container justify-center sm:mx-auto p-4">
         <button on:click={prevHero} class="flex-none"><img class="size-8" alt="navigate back" src="./icons/chevron-left.svg"/></button>
         <div class="flex flex-wrap-reverse justify-center items-center p-4 md:space-x-4">
