@@ -21,33 +21,53 @@
     ]
     let heroIndex = 0;
     $: hero = heroData[heroIndex];
+    
+    /**
+	 * @param {number} inc
+	 */
+    function incrementHeroIndex(inc) {
+        let unbounded = heroIndex + inc;
+        if (unbounded > heroData.length - 1) {
+            return 0;
+        }
+        if (unbounded < 0) {
+            return heroData.length - 1;
+        }
+        return unbounded;
+	}
 
-    function getNextHeroIndex() {
-		return heroIndex < heroData.length - 1 ? heroIndex + 1 : 0;
+	function nextHero() {
+		heroIndex = incrementHeroIndex(1);
 	}
-	function setNextHeroImage() {
-		heroIndex = getNextHeroIndex();
-	}
+
+    function prevHero() {
+        heroIndex = incrementHeroIndex(-1);
+    }
 
 </script>
 <main class="landscape-background center">
-    <div class="flex flex-wrap-reverse sm:container sm:mx-auto justify-center items-center p-8 md:space-x-4">
-        <div class="flex-none relative ">
-            <img alt="App preview: {hero.alt}"
-                class="h-[496px] border-8 border-black rounded-3xl shadow-md" 
-                src={hero.image}
-                on:click={setNextHeroImage} />
-        </div>
-        <div class="max-w-md p-4 md:p-8 space-y-2 text-center md:text-left">
-            <div class="space-y-1">
-                <h1 class="text-3xl font-bold">{hero.title}</h1>
-                <p class="text-xl">{hero.subtitle}</p>
+    <div class="flex sm:container justify-center sm:mx-auto p-4">
+        <button on:click={prevHero} class="flex-none"><img class="size-8" alt="navigate back" src="./icons/chevron-left.svg"/></button>
+        <div class="flex flex-wrap-reverse justify-center items-center p-4 md:space-x-4">
+            <div class="flex-none relative p-4">
+                <img alt="App preview: {hero.alt}"
+                    class="h-[496px] border-8 border-black rounded-3xl shadow-md" 
+                    src={hero.image}
+                    on:click={nextHero} />
             </div>
+            <div class="max-w-md p-4 space-y-2 text-center md:text-left">
+                <div class="space-y-1">
+                    <h1 class="text-3xl font-bold">{hero.title}</h1>
+                    <p class="text-xl">{hero.subtitle}</p>
+                </div>
 
-            <div class="flex space-x-2 py-4 justify-center md:justify-start">
-                <img alt="Download on the App Store" class="h-10" src="./images/download/app-store-badge.svg">
-                <img alt="Get it on Google Play" class="h-10" src="./images/download/google-play-badge.png">
+                <div class="flex space-x-2 py-4 justify-center md:justify-start">
+                    <img alt="Download on the App Store" class="h-10" src="./images/download/app-store-badge.svg">
+                    <img alt="Get it on Google Play" class="h-10" src="./images/download/google-play-badge.png">
+                </div>
             </div>
         </div>
+
+        <button on:click={nextHero} class="flex-none"><img class="size-8" alt="navigate next" src="./icons/chevron-right.svg"/></button>
     </div>
 </main>
