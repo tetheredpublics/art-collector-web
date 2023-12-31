@@ -25,13 +25,13 @@
 </script>
 
 
-<button class="popover-button" on:click={presentDownload}>
+<button class="flex-none popover-button" on:click={presentDownload}>
     <img class="h-10" alt="Download on the App Store" src="./images/download/app-store-badge.svg">
 </button>
 
 <Popover bind:visible={showPopover}>
     <div>
-        <img class="max-w-full" alt="ios download QR code" src="./images/download/ios-qr-code.jpg">
+        <img alt="ios download QR code" src="./images/download/ios-qr-code.jpg">
         
         <a class="z-1 text-link font-bold p-2" target="_blank" href="{IOS_DOWNLOAD_URL}">
             Download on the App Store

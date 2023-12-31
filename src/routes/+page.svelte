@@ -51,15 +51,15 @@
 <main class="landscape-background center" style="background-image: url('./images/landscape-clear-sm.png');">
     <div class="flex xs:container justify-center sm:mx-auto p-4">
         <button on:click={prevHero} class="flex-none"><img class="size-8" alt="navigate back" src="./icons/chevron-left.svg"/></button>
-        <div class="flex flex-wrap-reverse justify-center items-center p-4 md:space-x-4">
-            <div class="flex-none relative p-4">
+        <div class="flex flex-wrap-reverse justify-center items-center py-4 sm:px-4 md:space-x-4">
+            <div class="flex-none relative py-4 sm:px-4">
                 <img 
                     alt="App preview: {hero.alt}"
                     class="max-h-[496px] border-8 border-black rounded-3xl shadow-md" 
                     src={hero.image}
                 />
             </div>
-            <div class="max-w-md p-4 space-y-2 text-center md:text-left">
+            <div class="max-w-md py-4 sm:px-4 space-y-2 text-center md:text-left">
                 <div class="space-y-1">
                     <h1 class="text-3xl font-bold">{hero.title}</h1>
                     <p class="text-xl">{hero.subtitle}</p>
@@ -70,6 +70,8 @@
                     <AndroidDownloadButton/>
                 </div>
             </div>
+
+            <img class="block sm:hidden size-32 bg-white rounded-xl border-2 border-black/25" alt="Art Collector Logo" src="./images/logo@0.25x.png">
         </div>
 
         <button on:click={nextHero} class="flex-none"><img class="size-8" alt="navigate next" src="./icons/chevron-right.svg"/></button>
