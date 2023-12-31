@@ -12,6 +12,9 @@ export default {
       },
       fontFamily: {
         main: ["Mulish", "sans-serif"]
+      },
+      boxShadow: {
+        'blue': '0px 4px 0px 0px rgb(30 58 138);',
       }
     },
   },

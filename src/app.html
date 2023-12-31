@@ -6,10 +6,30 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
 
+		<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Art Collector App</title>
+		<meta name="description" content="Step into Art, One Stride at a Time." />
+	
+		<meta property="og:title" content="Art Collector App" />
+		<meta property="og:description" content="Step into Art, One Stride at a Time." />
+		<meta property="og:type" content="website" />
+		<meta property="og:image" content="./assets/logo@0.5x.png" />
+		<meta property="og:locale" content="en_GB" />
+		<meta property="og:site_name" content="artcollectorapp.net" />
+
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
 	</head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-6RKTJ1XZ8T"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-6RKTJ1XZ8T');
+	</script>
 	<body class="bg-background font-main" data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>

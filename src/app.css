@@ -7,11 +7,12 @@
 
     a {
         cursor: pointer;
+        pointer-events: auto; 
     }
 
     .landscape-background {
         background-color: theme('colors.specialBackground');
-        min-height: 90vh;
+        min-height: calc(100vh - 65px);
         background-image: url('./images/landscape-clear-sm.png');
         background-repeat: repeat-x;
         background-position: bottom;
