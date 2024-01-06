@@ -5,7 +5,7 @@
 	import Popover from "./Popover.svelte";
     
     // TODO Make constant
-    let IOS_DOWNLOAD_URL = "https://apple.co/41HAEvl"
+    let IOS_DOWNLOAD_URL = "https://apps.apple.com/app/apple-store/id6449506448?pt=122009505&ct=artcollector-web&mt=8"
     let showPopover = false;
 
     function presentDownload() {
