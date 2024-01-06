@@ -9,8 +9,6 @@
     let showPopover = false;
 
     function presentDownload() {
-        console.log("present")
-        
         MixpanelService.logTappedIOSDownloadButton()
         if (isMobile.iOS()) {
             window.location.replace(IOS_DOWNLOAD_URL);
