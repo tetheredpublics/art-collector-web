@@ -16,6 +16,10 @@
 <Popover bind:visible={showPopover}>
     <div class="text-center">
         <h2 class="text-xl font-bold mb-2">Comming Soon...</h2>
-        <p>Encourage our Android developers work faster!</p>
+        <p>Encourage our Android developers work faster, 
+            <a href="https://www.instagram.com/artcollectorapp/">
+                Follow us on Instagram!
+            </a>
+        </p>
     </div>
 </Popover>
