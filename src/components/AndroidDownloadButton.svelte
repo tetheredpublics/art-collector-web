@@ -14,7 +14,7 @@
 </button>
 
 <Popover bind:visible={showPopover}>
-    <div>
+    <div class="text-center">
         <h2 class="text-xl font-bold mb-2">Comming Soon...</h2>
         <p>Encourage our Android developers work faster!</p>
     </div>
