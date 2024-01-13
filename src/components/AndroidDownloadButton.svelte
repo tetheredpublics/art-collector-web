@@ -9,8 +9,8 @@
     }
 </script>
 
-<button class="data-android-download-button flex-none popover-button" on:click={togglePopover}>
-    <img class="data-android-download-button h-10" alt="Get it on Google Play" src="./images/download/google-play-badge.png">
+<button class="android-download-button flex-none popover-button" on:click={togglePopover}>
+    <img id="android-download-button" class="android-download-button h-10" alt="Get it on Google Play" src="./images/download/google-play-badge.png">
 </button>
 
 <Popover bind:visible={showPopover}>

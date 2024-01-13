@@ -24,7 +24,7 @@
 
 
 <button class="ios-download-button flex-none popover-button" on:click={presentDownload}>
-    <img class="ios-download-button h-10" alt="Download on the App Store" src="./images/download/app-store-badge.svg">
+    <img id="ios-download-button" class="ios-download-button h-10" alt="Download on the App Store" src="./images/download/app-store-badge.svg">
 </button>
 
 <Popover bind:visible={showPopover}>
