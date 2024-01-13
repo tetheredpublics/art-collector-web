@@ -23,7 +23,7 @@
 </script>
 
 
-<button class="flex-none popover-button" on:click={presentDownload}>
+<button id="ios-download-button" class="flex-none popover-button" on:click={presentDownload}>
     <img class="h-10" alt="Download on the App Store" src="./images/download/app-store-badge.svg">
 </button>
 
