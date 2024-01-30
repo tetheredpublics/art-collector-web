@@ -11,7 +11,7 @@
     }
 
     .landscape-background {
-        background-color: theme('colors.specialBackground');
+        /* background-color: theme('colors.specialBackground'); */
         min-height: calc(100vh - 140px);
         background-image: url('./images/landscape-clear-sm.png');
         background-repeat: repeat-x;

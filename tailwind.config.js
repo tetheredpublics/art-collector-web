@@ -8,13 +8,15 @@ export default {
         specialBackground: "#8ED1FC",
         primary: "#0692E2",
         link: "#066AAB",
-        specialGreen: "#7BC300"
+        specialGreen: "#7BC300",
+        beige: "#EADFD0"
       },
       fontFamily: {
         main: ["Mulish", "sans-serif"]
       },
       boxShadow: {
-        'blue': '0px 4px 0px 0px rgb(30 58 138);',
+        'blue': '0px 6px 0px 0px rgb(30 58 138);',
+        'appbox': '0px 6px 0px 0px #ADADA9;',
       }
     },
   },
