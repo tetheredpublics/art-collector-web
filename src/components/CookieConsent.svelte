@@ -30,7 +30,7 @@
 </script>
 
 {#if !$hasConsentResponse}
-<div class="fixed bottom-0 right-0 m-4 bg-specialBackground rounded-md py-2 px-2 text-left shadow-md z-50 border-2 border-blue-900">
+<div class="fixed bottom-0 right-0 m-4 bg-background rounded-md py-2 px-2 text-left shadow-md z-50 border-2 border-[#ADADA9]">
     <div class="flex flex-wrap sm:container justify-end sm:mx-auto">
         <p class="text-xs md:max-w-sm p-2">
             We use cookies and similar technologies to enhance your experience on our site.
