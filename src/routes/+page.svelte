@@ -1,4 +1,5 @@
 <script>
+	import SEO from '../components/SEO.svelte';
 	import DownloadHero from "../components/DownloadHero.svelte";
 	import InfoCard from "../components/InfoCard.svelte";
 	import InfoFlat from "../components/InfoFlat.svelte";
@@ -12,6 +13,9 @@
 	/** @type {import('./$types').PageData} */
 	export let data;
 </script>
+
+<SEO title="Home" />
+
 <main>
 	<div class="space-y-8">
 		<DownloadHero phoneHeight="456px" showControls={false} />
