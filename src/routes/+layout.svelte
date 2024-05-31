@@ -2,6 +2,7 @@
     import "../app.css";
 	import CookieConsent from "../components/CookieConsent.svelte";
     import { isMobile } from "$lib/utils";
+	import SupportButton from "../components/SupportButton.svelte";
 
     let menuIsOpen = false
 
@@ -31,6 +32,7 @@
     <nav class={`p-4 flex ${menuIsOpen ? "translate-x-0 z-9999 top-[60px] fixed w-screen h-screen flex-col text-center space-y-4 bg-background p-16" : "hidden md:block"}`}>  
         <a on:click={closeMenu} href="/" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">Home</a>
         <a on:click={clickDownload} href="/download" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">Download</a>
+        <a target="_blank" href="https://ko-fi.com/artcollectorapp" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">Support Me</a>
         <a target="_blank" href="https://www.instagram.com/artcollectorapp" class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">Instagram</a>
         <a href="/privacy.html" class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">Privacy</a>
         <a target="_blank" href="https://forms.gle/N3R8maka3Eg8Por27" class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">Feedback</a>
@@ -41,15 +43,19 @@
 
 <slot />
 
-<footer class="bg-black p-4 pb-32">
-    <div class="flex justify-between pb-4">
+<footer class="bg-black p-4">
+    <div class="flex justify-between pb-32">
         <copywright class="text-slate-300 text-xs py-2">© Art Collector 2023</copywright>
-        <ul class="text-slate-300 text-xs flex py-2">
-            <li><a class="p-2" target="_blank" href="https://www.instagram.com/artcollectorapp">Instagram</a></li>
-            <li><a class="p-2" href="/privacy.html">Privacy</a></li>
-            <li><a class="p-2" target="_blank" href="https://forms.gle/N3R8maka3Eg8Por27">Feedback</a></li>
-        </ul>
+        <div class="text-right">
+
+            <ul class="text-slate-300 text-xs flex py-2">
+                <li><a class="p-2" target="_blank" href="https://www.instagram.com/artcollectorapp">Instagram</a></li>
+                <li><a class="p-2" href="/privacy.html">Privacy</a></li>
+                <li><a class="p-2" target="_blank" href="https://forms.gle/N3R8maka3Eg8Por27">Feedback</a></li>
+            </ul>
+        </div>
     </div>
+    <SupportButton />
 </footer>
 
 <CookieConsent />

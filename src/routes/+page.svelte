@@ -1,16 +1,13 @@
 <script>
 	import SEO from '../components/SEO.svelte';
-	import DownloadHero from "../components/DownloadHero.svelte";
-	import InfoCard from "../components/InfoCard.svelte";
-	import InfoFlat from "../components/InfoFlat.svelte";
-	import AppStats from "../components/AppStats.svelte";
-	import AndroidDownloadButton from "../components/AndroidDownloadButton.svelte";
-	import IosDownloadButton from "../components/IOSDownloadButton.svelte";
-	import { STRINGS } from "$lib";
+	import DownloadHero from '../components/DownloadHero.svelte';
+	import InfoCard from '../components/InfoCard.svelte';
+	import InfoFlat from '../components/InfoFlat.svelte';
+	import AppStats from '../components/AppStats.svelte';
+	import AndroidDownloadButton from '../components/AndroidDownloadButton.svelte';
+	import IosDownloadButton from '../components/IOSDownloadButton.svelte';
+	import { STRINGS } from '$lib';
 
-	
-
-	/** @type {import('./$types').PageData} */
 	export let data;
 </script>
 
@@ -27,19 +24,19 @@
 				</p>
 			</div>
 			<div class="flex justify-around items-center max-w-xl mx-auto">
-				<AppStats 
+				<AppStats
 					value={data.appstats.collected}
 					label="Collected"
 					imageSrc="./icons/collect.png"
 					imageAlt="Art Collector App Collect Art Icon"
 				/>
-				<AppStats 
+				<AppStats
 					value={data.appstats.dropped}
 					label="Dropped"
 					imageSrc="./icons/drop.png"
 					imageAlt="Art Collector App Drop Art Icon"
 				/>
-				<AppStats 
+				<AppStats
 					value={data.appstats.destroyed}
 					label="Destroyed"
 					imageSrc="./icons/destroy.png"
@@ -55,7 +52,7 @@
 				imageAlt={STRINGS.homeInfo1.imageAlt}
 			/>
 			<div class="max-w-4xl mx-4 md:mx-auto border-b-[#BABAB6] border-b-2"></div>
-			<InfoFlat 
+			<InfoFlat
 				title={STRINGS.homeInfo2.title}
 				body={STRINGS.homeInfo2.body}
 				imageSrc="./images/marketer.png"
@@ -76,10 +73,12 @@
 				imageSrc="./images/early-bird.png"
 				imageAlt=""
 			>
-				<p class="text-base/loose font-black text-gray-800 mb-8">Download today - The first 100 users win an award!</p>
+				<p class="text-base/loose font-black text-gray-800 mb-8">
+					Download today - The first 100 users win an award!
+				</p>
 				<div class="flex space-x-2 justify-start">
-					<IosDownloadButton/>
-					<AndroidDownloadButton/>
+					<IosDownloadButton />
+					<AndroidDownloadButton />
 				</div>
 			</InfoCard>
 		</div>
