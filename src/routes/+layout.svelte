@@ -22,7 +22,7 @@
         closeMenu()
     }
 </script>
-<header class="flex justify-between w-full bg-background fixed md:relative">
+<header id="art-collector-header" class="flex justify-between w-full bg-background fixed md:relative main-header">
 	<div class="p-4">
 		<h1 class="text-xl text-black font-black"><a href="/">Art Collector</a></h1>
 	</div>

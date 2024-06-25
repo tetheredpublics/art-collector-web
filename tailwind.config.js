@@ -9,7 +9,9 @@ export default {
         primary: "#0692E2",
         link: "#066AAB",
         specialGreen: "#7BC300",
-        beige: "#EADFD0"
+        beige: "#EADFD0",
+        grey: "#EDEDEA",
+        greyBorder: "#ADADA9"
       },
       fontFamily: {
         main: ["Mulish", "sans-serif"]
