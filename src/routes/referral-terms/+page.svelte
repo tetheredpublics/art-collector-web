@@ -1,5 +1,5 @@
 
-<main class="py-32">
+<main class="pb-32 pt-16">
     <div class="p-4 max-w-2xl mx-auto">
         <div class="mb-8">
         <img class="size-32 mx-auto md:mx-0" src="./icons/megaphone@0.5x.png" alt="8-bit megaphone" />
