@@ -34,7 +34,7 @@
     <div class="popover border-2 border-slate-500 z-[5] bg-white p-2 relative container rounded-lg max-w-full md:max-w-sm">
         <div class="text-right">
             <button class="hover:cursor-pointer" on:click={closePopover}>
-                <img class="size-6" alt="close popover" src="./icons/close.svg"/>
+                <img class="size-6" alt="close popover" src="/icons/close.svg"/>
             </button>
         </div>
         <div class="px-5 pb-5">

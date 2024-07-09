@@ -64,7 +64,7 @@
 </script>
 <div class="flex xs:container justify-center sm:mx-auto p-4">
     {#if showControls}
-    <button on:click={prevHero} class="flex-none"><img class="size-8" alt="navigate back" src="./icons/chevron-left.svg"/></button>
+    <button on:click={prevHero} class="flex-none"><img class="size-8" alt="navigate back" src="/icons/chevron-left.svg"/></button>
     {/if}
     <div class="flex flex-wrap-reverse justify-center items-center py-4 sm:px-4 md:space-x-8">
         <div class="flex-none py-4 sm:px-4">
