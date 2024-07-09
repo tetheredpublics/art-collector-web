@@ -11,6 +11,6 @@
 
 <SEO title="Download" />
 
-<main class="landscape-background center pb-16" style="background-image: url('./images/landscape-clear-sm.png');">
+<main class="landscape-background bg-specialBackground center pb-16" style="background-image: url('./images/landscape-clear-sm.png');">
 	<DownloadHero />
 </main>

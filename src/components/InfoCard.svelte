@@ -10,13 +10,14 @@
 
 </script>
 
-<div class="flex flex-wrap md:flex-nowrap max-w-4xl items-center justify-center rounded-xl mx-auto p-4 md:p-16 space-y-4 md:space-y-0 md:space-x-16 md:bg-white md:shadow-appbox md:border-2 md:border-[#ADADA9]">
-    <img class="max-h-56 w-56 max-w-full px-8 md:p-0" src="{imageSrc}" alt="{imageAlt}" />
-    <div>
-        <h2 class="text-2xl font-black text-gray-800 mb-2">
+<!-- <div class="flex flex-wrap md:flex-nowrap max-w-4xl items-end justify-center mx-auto p-4 space-y-4 md:space-y-0 md:space-x-16"> -->
+<div class="p-8 min-h-120 pb-16 text-center">
+    <div class="place-content-center min-h-64 md:min-h-80">
+        <img class="h-20 w-20 mx-auto mb-4 border-box" src="{imageSrc}" alt="{imageAlt}" />
+        <h2 class="text-2xl font-bold text-white pb-2 md:pb-4">
             {title}
         </h2>
-        <p class="text-base/loose font-bold text-gray-600">{body}</p>
+        <!-- <p class="text-base/loose font-bold text-gray-200">{body}</p> -->
         <slot>
         </slot>
     </div>

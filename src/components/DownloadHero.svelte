@@ -1,6 +1,7 @@
 <script>
     import AndroidDownloadButton from "./AndroidDownloadButton.svelte";
 	import IosDownloadButton from "./IOSDownloadButton.svelte";
+    import { onMount, onDestroy } from 'svelte';
 
     /** @type {string} */
     export let phoneHeight = "496px";
@@ -9,16 +10,16 @@
     
     let heroData = [
         {
-            image: "./images/preview/3.png",
-            title: "Collector and Curator",
-            subtitle: "Build your own virtual collection with great art from world-renowned institutions",
-            alt: "User art collection"
-        },
-        {
-            image: "./images/preview/2.png",
+            image: "./images/preview/4.png",
             title: "Discover Art and Stay Fit",
             subtitle: "Each step you take brings you closer to uncovering another masterpiece",
             alt: "Progress page with 990 steps until next artwork. Pending artworks waiting"
+        },
+        {
+            image: "./images/preview/3.png",
+            title: "Collect Great Art",
+            subtitle: "Build your own virtual collection with great art from world-renowned institutions",
+            alt: "User art collection"
         },
         {
             image: "./images/preview/1.png",
@@ -52,12 +53,20 @@
         heroIndex = incrementHeroIndex(-1);
     }
 
+    onMount(() => {
+        const interval = setInterval(nextHero, 4000);
+
+        onDestroy(() => {
+            clearInterval(interval);
+        });
+    });
+
 </script>
 <div class="flex xs:container justify-center sm:mx-auto p-4">
     {#if showControls}
     <button on:click={prevHero} class="flex-none"><img class="size-8" alt="navigate back" src="./icons/chevron-left.svg"/></button>
     {/if}
-    <div class="flex flex-wrap-reverse justify-center items-center py-4 sm:px-4 md:space-x-4">
+    <div class="flex flex-wrap-reverse justify-center items-center py-4 sm:px-4 md:space-x-8">
         <div class="flex-none py-4 sm:px-4">
             <img 
                 alt="App preview: {hero.alt}"
