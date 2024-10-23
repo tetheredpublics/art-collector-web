@@ -24,7 +24,7 @@
         <p class="text-base/loose font-bold text-gray-600 px-1 md:px-0 mb-4">{body}</p>
 
         {#if ctaUrl && ctaLabel}
-        <a class="inline-block" href="{ctaUrl}">
+        <a data-sveltekit-reload class="inline-block" href="{ctaUrl}">
             <button class="border-gray-400 border-2 font-bold block text-gray-800 text-sm shadow-gray px-4 py-2 bg-white rounded-md">
                 {ctaLabel}
             </button>

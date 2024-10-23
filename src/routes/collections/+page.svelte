@@ -6,7 +6,7 @@
             "description": "The Rijksmuseum in Amsterdam is the Netherlands' premier art and history museum. Known for its Dutch Golden Age masterpieces, including Rembrandt's \"The Night Watch,\" it spans over 800 years of art history with a vast collection of paintings, sculptures, and historical artifacts.",
             "image_src": "https://d3gm6vhzqyd5xu.cloudfront.net/assets/rijks-award.png",
             "image_alt": "Art Collector 8-bit Rijksmuseum building",
-            "url": "https://www.rijksmuseum.nl/en",
+            "url": "https://www.rijksmuseum.nl/en/about-us",
         },
         {
             "name": "Art Institute of Chicago",
@@ -23,9 +23,9 @@
     <div class="p-4 max-w-4xl mx-auto">
         <div class="mb-8">
             <h1 class="text-4xl font-black text-gray-800 mb-8">Our Collections</h1>
-            <p class="text-xl/loose text-gray-800 pb-4">Embark on a unique journey where each step immerses you deeper into the world of art. With Art Collector, build your own virtual collection with masterpieces from world-renowned institutions. Collect, curate, trade, and even decide the fate of great art. You’re the curator, your choices shape this world.</p>
+            <p class="text-xl/loose text-gray-800 pb-4">Leveraging open-access data, Art Collector grants you access to the extensive archives of the world’s most renowned art institutions. Discover thousands of works, ranging from celebrated masterpieces to hidden gems rarely seen in gallery halls.</p>
         </div>
-        <div class="space-y-8">
+        <div class="space-y-8 mb-8">
             {#each collections as collection}
                 <CollectionItem 
                     title={collection.name} 
@@ -36,6 +36,9 @@
                 />
                 <!-- <div class="max-w-4xl mx-4 md:mx-auto border-b-[#BABAB6] border-b-2"></div> -->
             {/each}
+        </div>
+        <div class="mb-8">
+            <p class="text-base/loose font-bold text-gray-600 px-1 md:px-0 mb-2">We're always on the look-out for more art to include in the app. Don't hesitate to reach out if you know of any great art datasets we might love!</p>
         </div>
     </div>
 </main>

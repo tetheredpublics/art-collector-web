@@ -17,11 +17,32 @@
 <main>
 	<div class="space-y-8">
 		<DownloadHero phoneHeight="456px" showControls={false} />
-		<div class="bg-appBeige px-1 md:px-4 py-4 pb-16 space-y-4 border-y-2 border-[#ADADA9]">
-			<div class="md:max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8 col-auto mx-auto divide-y divide-dashed divide-gray-400 md:divide-none">
-				{#each STRINGS.testimonials as testimonial}
-				<Testimonial item={testimonial} />
-				{/each}
+		<div class="bg-appBeige p-4 py-8 space-y-4 text-center border-t-2 border-b-2 border-[#ADADA9]">
+			<div class="px-4 md:px-0">
+				<h2 class="text-2xl font-black text-gray-800 mb-2">{STRINGS.appstats.title}</h2>
+				<p class="text-lg text-gray-600 font-bold mb-4 max-w-md mx-auto">
+					{STRINGS.appstats.body}
+				</p>
+			</div>
+			<div class="flex justify-around items-center max-w-xl mx-auto">
+				<AppStats
+					value={data.appstats.collected}
+					label="Collected"
+					imageSrc="./icons/collect.png"
+					imageAlt="Art Collector App Collect Art Icon"
+				/>
+				<AppStats
+					value={data.appstats.dropped}
+					label="Dropped"
+					imageSrc="./icons/drop.png"
+					imageAlt="Art Collector App Drop Art Icon"
+				/>
+				<AppStats
+					value={data.appstats.destroyed}
+					label="Destroyed"
+					imageSrc="./icons/destroy.png"
+					imageAlt="Art Collector App Destroy Art Icon"
+				/>
 			</div>
 		</div>
 		<div class="space-y-4">
@@ -52,48 +73,11 @@
 				ctaUrl="/download"
 			/>
 		</div>
-		<!-- <div class="bg-[#EDEDEA] px-1 md:px-4 py-8 pb-16 space-y-4 border-t-2 border-[#ADADA9]">
-			<InfoCard
-				title="Your Invitation to an Artistic Adventure"
-				body="Become an early adopter of Art Collector and get the chance to claim the best pieces before anyone else. Join us now, and transform your steps into a canvas of discovery!"
-				imageSrc="./images/early-bird.png"
-				imageAlt=""
-			>
-				<p class="text-base/loose font-black text-gray-800 mb-8">
-					Download today - The first 100 users win an award!
-				</p>
-				<div class="flex space-x-2 justify-start">
-					<IosDownloadButton />
-					<AndroidDownloadButton />
-				</div>
-			</InfoCard>
-		</div> -->
-		<div class="bg-appBeige p-4 py-8 space-y-4 text-center border-t-2 border-b-2 border-[#ADADA9]">
-			<div class="px-4 md:px-0">
-				<h2 class="text-2xl font-black text-gray-800 mb-2">{STRINGS.appstats.title}</h2>
-				<p class="text-lg text-gray-600 font-bold mb-4 max-w-md mx-auto">
-					{STRINGS.appstats.body}
-				</p>
-			</div>
-			<div class="flex justify-around items-center max-w-xl mx-auto">
-				<AppStats
-					value={data.appstats.collected}
-					label="Collected"
-					imageSrc="./icons/collect.png"
-					imageAlt="Art Collector App Collect Art Icon"
-				/>
-				<AppStats
-					value={data.appstats.dropped}
-					label="Dropped"
-					imageSrc="./icons/drop.png"
-					imageAlt="Art Collector App Drop Art Icon"
-				/>
-				<AppStats
-					value={data.appstats.destroyed}
-					label="Destroyed"
-					imageSrc="./icons/destroy.png"
-					imageAlt="Art Collector App Destroy Art Icon"
-				/>
+		<div class="bg-appBeige px-1 md:px-4 py-4 pb-16 space-y-4 border-y-2 border-[#ADADA9]">
+			<div class="md:max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8 col-auto mx-auto divide-y divide-dashed divide-gray-400 md:divide-none">
+				{#each STRINGS.testimonials as testimonial}
+				<Testimonial item={testimonial} />
+				{/each}
 			</div>
 		</div>
 	</div>

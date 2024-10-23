@@ -19,12 +19,13 @@
         <h2 class="text-2xl font-black text-gray-800 mb-2 px-1 md:px-0">
             {title}
         </h2>
-        <p class="text-base/loose font-bold text-gray-600 px-1 md:px-0 mb-4">{body}</p>
+        <p class="text-base/loose font-bold text-gray-600 px-1 md:px-0 mb-2">{body}</p>
         
-        <a class="inline-block" href="{learnMoreUrl}">
-            <button class="border-gray-400 border-2 font-bold block text-gray-800 text-sm shadow-gray px-4 py-2 bg-white rounded-md">
-                Learn more
-            </button>
+        <a class="flex items-center space-x-1 h-auto" target="_blank" href="{learnMoreUrl}">
+            <span class="inline-block text-base/loose font-bold text-link">
+                Learn More 
+            </span>
+            <img class="inline-block size-4" alt="open in new window" src="/icons/new-window.svg"/>
         </a>
     </div>
 </div>
