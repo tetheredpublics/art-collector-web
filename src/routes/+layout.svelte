@@ -94,17 +94,6 @@
 <slot />
 
 <footer class="bg-black p-4">
-    <div class="flex justify-between">
-        <copywright class="text-slate-300 text-xs py-2">© Art Collector 2023</copywright>
-        <div class="text-right">
-
-            <ul class="text-slate-300 text-xs flex py-2">
-                <li><a class="p-2" target="_blank" href="https://www.instagram.com/artcollectorapp">Instagram</a></li>
-                <li><a class="p-2" href="/privacy.html">Privacy</a></li>
-                <li><a class="p-2" target="_blank" href="https://forms.gle/N3R8maka3Eg8Por27">Feedback</a></li>
-            </ul>
-        </div>
-    </div>
     <InfoCard
         title="Your Ticket to an Artistic Adventure"
         body="Become an early adopter of Art Collector and get the chance to claim the best pieces before anyone else. Join us now, and transform your steps into a canvas of discovery!"
