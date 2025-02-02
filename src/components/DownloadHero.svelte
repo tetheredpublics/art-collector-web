@@ -1,7 +1,8 @@
 <script>
     import AndroidDownloadButton from "./AndroidDownloadButton.svelte";
 	import IosDownloadButton from "./IOSDownloadButton.svelte";
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
+    import { browser } from '$app/environment';
 
     /** @type {string} */
     export let phoneHeight = "496px";
@@ -34,16 +35,9 @@
     /**
 	 * @param {number} inc
 	 */
-    function incrementHeroIndex(inc) {
-        let unbounded = heroIndex + inc;
-        if (unbounded > heroData.length - 1) {
-            return 0;
-        }
-        if (unbounded < 0) {
-            return heroData.length - 1;
-        }
-        return unbounded;
-	}
+     function incrementHeroIndex(inc) {
+        heroIndex = ((heroIndex + inc + heroData.length) % heroData.length);
+    }
 
 	function nextHero() {
 		heroIndex = incrementHeroIndex(1);
@@ -53,13 +47,13 @@
         heroIndex = incrementHeroIndex(-1);
     }
 
-    onMount(() => {
-        const interval = setInterval(nextHero, 4000);
-
-        onDestroy(() => {
-            clearInterval(interval);
-        });
-    });
+    function start() {
+        interval = setInterval(nextHero, 4000);
+        return () => clearInterval(interval);
+    }
+    let interval;
+    
+    onMount(start);
 
 </script>
 <div class="flex xs:container justify-center sm:mx-auto p-4">

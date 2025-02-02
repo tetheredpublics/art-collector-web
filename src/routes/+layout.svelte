@@ -62,11 +62,13 @@
     class:scrolled={isScrolled}
 >
 	<div class="p-4 space-x-2 flex flex-wrap content-center">
-        <img 
-            class="block size-10" 
-            alt="Art Collector Logo" 
-            src="./images/logo@0.25x.png"
-        />
+        <a href="/">
+            <img 
+                class="block size-10" 
+                alt="Art Collector Logo" 
+                src="/images/logo@0.25x.png"
+            />
+        </a>
 		<h1 class="text-xl text-black font-black self-center"><a href="/">Art Collector</a></h1>
 	</div>
     <button class="p-4 md:hidden z-9999" on:click={toggleMenu}>
