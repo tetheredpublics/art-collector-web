@@ -56,17 +56,23 @@
     }
 </style>
 
-<header id="art-collector-header" 
+<header 
+    id="art-collector-header" 
     class="flex justify-between w-full bg-white main-header absolute border-b-4 border-gray-300"
     class:scrolled={isScrolled}
 >
-	<div class="p-4">
-		<h1 class="text-xl text-black font-black"><a href="/">Art Collector</a></h1>
+	<div class="p-4 space-x-2 flex flex-wrap content-center">
+        <img 
+            class="block size-10" 
+            alt="Art Collector Logo" 
+            src="./images/logo@0.25x.png"
+        />
+		<h1 class="text-xl text-black font-black self-center"><a href="/">Art Collector</a></h1>
 	</div>
     <button class="p-4 md:hidden z-9999" on:click={toggleMenu}>
         <img class="size-6" alt="button" src="/icons/{menuIsOpen ? "close" : "menu"}.svg" />
     </button> 
-    <nav class={`p-4 flex ${menuIsOpen ? "translate-x-0 z-9999 top-[60px] fixed w-screen h-screen flex-col text-center space-y-4 bg-background p-16" : "hidden md:block"}`}>  
+    <nav class={`p-4 flex ${menuIsOpen ? "translate-x-0 z-9999 top-[60px] fixed w-screen h-screen flex-col text-center space-y-4 bg-background p-16" : "content-center flex-wrap hidden md:block"}`}>  
         <a on:click={closeMenu} href="/" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
             Home
         </a>

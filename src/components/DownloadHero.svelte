@@ -77,8 +77,16 @@
         </div>
         <div class="max-w-md py-4 sm:px-4 space-y-8 text-center md:text-left">
             <div class="space-y-4">
-                <h1 class="text-3xl font-bold text-black">{hero.title}</h1>
-                <p class="text-xl text-gray-800">{hero.subtitle}</p>
+                <img 
+                    class="block mx-auto md:mx-0 size-32 bg-white rounded-xl border-2 border-black/25" 
+                    alt="Art Collector Logo" 
+                    src="./images/logo@0.25x.png"
+                />
+
+                <div class="space-y-2">
+                    <h1 class="text-3xl font-bold text-black">{hero.title}</h1>
+                    <p class="text-xl text-gray-800">{hero.subtitle}</p>
+                </div>
             </div>
 
             <div class="flex space-x-2 justify-center md:justify-start">
@@ -86,7 +94,6 @@
                 <AndroidDownloadButton/>
             </div>
         </div>
-        <img class="block sm:hidden size-32 bg-white rounded-xl border-2 border-black/25" alt="Art Collector Logo" src="./images/logo@0.25x.png">
     </div>
     {#if showControls}
     <button on:click={nextHero} class="flex-none"><img class="size-8" alt="navigate next" src="./icons/chevron-right.svg"/></button>
