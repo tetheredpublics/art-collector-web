@@ -40,11 +40,11 @@
     }
 
 	function nextHero() {
-		heroIndex = incrementHeroIndex(1);
+		incrementHeroIndex(1);
 	}
 
     function prevHero() {
-        heroIndex = incrementHeroIndex(-1);
+        incrementHeroIndex(-1);
     }
 
     function start() {
