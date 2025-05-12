@@ -79,6 +79,9 @@
             Home
         </a>
         
+        <a target="_blank" href="https://shop.artcollectorapp.net" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
+            Shop
+        </a>
         <a target="_blank" href="https://ko-fi.com/artcollectorapp" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
             Support Me
         </a>
