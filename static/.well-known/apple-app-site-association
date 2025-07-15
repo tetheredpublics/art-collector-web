@@ -1,0 +1,17 @@
+{
+    "applinks": {
+        "details": [
+            {
+                "appIDs": [
+                    "7JLZ85CW89.tetheredpublics.ArtCollector",
+                    "7JLZ85CW89.tetheredpublics.ArtCollectorBeta"
+                ],
+                "components": [
+                    {
+                        "/": "/c/*"
+                    }
+                ]
+            }
+        ]
+    }
+}
