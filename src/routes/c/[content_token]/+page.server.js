@@ -1,17 +1,18 @@
+import { API_KEY } from '$env/static/private';
+
 export async function load({ params, fetch }) {
     const { content_token } = params;
 
-    // let baseUrl = "http://api.artcollectorapp.net"
-    let testUrl = "http://localhost:8000"
+    let baseUrl = "http://api.artcollectorapp.net"
     
     try {
         const response = await fetch(
-            `${testUrl}/api/1/collector/1/shortlink/${content_token}?verbose=true`,
+            `${baseUrl}/api/1/collector/1/shortlink/${content_token}?verbose=true`,
             {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
-                    "x-api-key": "E63pwKnNyXBy0yGv08zpZSgGTA4xlTV7bIzVSU7LSpY",
+                    "x-api-key": API_KEY,
                 },
             }
         );
