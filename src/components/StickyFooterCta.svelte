@@ -43,25 +43,8 @@
     });
 </script>
 
-<style>
-  /* Optional animation */
-  .slide-up {
-    animation: slideUpFadeIn 0.3s ease-out;
-  }
 
-  @keyframes slideUpFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>
-
-<div class:translate-y-full={!showSticky} class="bg-[#FECDA5] fixed bottom-0 space-x-4 left-0 right-0 z-50 bg-white border-t border-black border-opacity-[0.16] px-4 py-4 flex items-center justify-between transition-transform duration-300 transform">
+<div class:translate-y-full={!showSticky} class="bg-appPeach fixed bottom-0 space-x-4 left-0 right-0 z-50 bg-white border-t border-black border-opacity-[0.16] px-4 py-4 flex items-center justify-between transition-transform duration-300 transform">
     {#if device === 'android'}
         <h2 class="md:text-lg font-bold text-black">Get Early Access</h2>
     {:else}
