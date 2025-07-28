@@ -22,7 +22,6 @@
         const bodyHeight = document.body.offsetHeight;
 
         const atBottom = scrollTop + windowHeight >= bodyHeight - 200;
-        const atTop = scrollTop <= 10;
         showSticky = !(atBottom);
     } 
 
@@ -43,7 +42,7 @@
 </script>
 
 
-<div class:translate-y-full={!showSticky} class="bg-appPeach fixed bottom-0 space-x-4 left-0 right-0 z-50 bg-white border-t border-black border-opacity-[0.16] px-4 py-4 flex items-center justify-between transition-transform duration-300 transform">
+<div class:translate-y-full={!showSticky} class="bg-appPeach fixed bottom-0 space-x-4 left-0 right-0 z-50 border-t border-black border-opacity-[0.16] px-4 py-4 flex items-center justify-between transition-transform duration-300 transform">
     {#if device === 'android'}
         <h2 class="md:text-lg font-bold text-black">Get Early Access</h2>
     {:else}
