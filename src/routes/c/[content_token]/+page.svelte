@@ -40,9 +40,6 @@
     } else if (isMobile.iOS()) {
       device = 'ios';
       
-    } else {
-        console.log(navigator.userAgent)
-        console.log("FUICK FOOF")
     }
   });
 </script>

@@ -23,7 +23,6 @@
 
         const atBottom = scrollTop + windowHeight >= bodyHeight - 200;
         const atTop = scrollTop <= 10;
-        console.log(atBottom, atTop, scrollTop)
         showSticky = !(atBottom);
     } 
 
