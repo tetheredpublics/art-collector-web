@@ -5,8 +5,8 @@
 	import SupportButton from "../components/SupportButton.svelte";
     import InfoCard from "../components/InfoCard.svelte";
     import IosDownloadButton from "../components/IOSDownloadButton.svelte";
-    import AndroidDownloadButton from "../components/AndroidDownloadButton.svelte";
     import { onMount, onDestroy } from 'svelte';
+	import AndroidWaitlistButton from "../components/AndroidWaitlistButton.svelte";
 
 
     let menuIsOpen = false
@@ -27,6 +27,9 @@
         if (isMobile.iOS()) {
 			window.location.replace(IOS_DOWNLOAD_URL);
 		}
+        if (isMobile.Android()) {
+            window.open("https://forms.gle/kHuwRg63drVoTgCF9", '_blank');
+        }
         closeMenu()
     }
 
@@ -58,7 +61,7 @@
 
 <header 
     id="art-collector-header" 
-    class="flex justify-between w-full bg-white main-header absolute border-b-4 border-gray-300"
+    class="flex justify-between w-full bg-white main-header absolute border-b-2 border-appGreyBorder"
     class:scrolled={isScrolled}
 >
 	<div class="p-4 space-x-2 flex flex-wrap content-center">
@@ -116,7 +119,7 @@
         </p>
         <div class="flex space-x-2 justify-center">
             <IosDownloadButton />
-            <AndroidDownloadButton />
+            <AndroidWaitlistButton compact={true}/>
         </div>
     </InfoCard>
     <SupportButton />

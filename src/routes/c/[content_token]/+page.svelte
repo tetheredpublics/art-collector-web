@@ -5,6 +5,8 @@
     import ArtView from "../../../components/ArtView.svelte";
     import AvatarView from "../../../components/AvatarView.svelte";
     import { page } from '$app/stores';
+    import { onMount } from 'svelte';
+	import StickyFooterCta from '../../../components/StickyFooterCta.svelte';
     
     export let data: any;
     
@@ -20,13 +22,30 @@
     $: seoTitle = item ? `${item.title} by ${item.artist}` : 'Shared Artwork';
     $: seoDescription = item ? `${item.title} by ${item.artist} (${item.year}) - ${item.medium}` : 'Check out this artwork shared on Art Collector';
     $: seoImage = item?.image_url || '/images/logo@0.5x.png';
-</script>
 
-<style>
-    #art-collector-header {
-        opacity: 0;
+
+    const isMobile = {
+        Android: () => navigator.userAgent.match(/Android/i),
+        iOS: () => navigator.userAgent.match(/iPhone|iPad|iPod/i),
+        any: function () {
+            return this.Android() || this.iOS();
+        }
+    };
+
+  let device: string = 'unknown';
+
+  onMount(() => {
+    if (isMobile.Android()) {
+      device = 'android';
+    } else if (isMobile.iOS()) {
+      device = 'ios';
+      
+    } else {
+        console.log(navigator.userAgent)
+        console.log("FUICK FOOF")
     }
-</style>
+  });
+</script>
 
 <SEO title={seoTitle} description={seoDescription} image={seoImage} />
 
@@ -41,25 +60,27 @@
             </div>
         </div>
     {:else if content}
-        <div class="container mx-auto px-4 max-w-full w-[600px]">
+        <div class="container mx-auto md:px-4 max-w-full w-[564px]">
             <!-- Small heading with avatar and username -->
             {#if collector}
-                <div class="flex items-center space-x-2 mb-4">
-                    <AvatarView url={collector.avatar_url} username={collector.username} size="small" />
-                    <span class="text-[16px] font-bold leading-[19px] text-black">{collector.username} shared</span>
+                <div class="flex items-center space-x-2 mb-4 px-4">
+                    <AvatarView 
+                        url={collector.avatar_url} 
+                        username={collector.username} 
+                        size="small" 
+                        color={collector.avatar_color} 
+                    />
+                    <span class="text-[16px] font-bold leading-[19px] text-black">{collector.username} shared...</span>
                 </div>
             {/if}
             <!-- Artwork Content -->
             {#if item}
-                <div class="bg-white p-4 rounded-lg shadow-sm pb-6 mb-6">
+                <div class="bg-white md:p-4 md:rounded-xl shadow-sm pb-6">
                     <ArtView 
                         item={item}
                         collector={collector}
                         activity={activity}
-                        on:profileClick={(event) => {
-                            // Handle profile click - could navigate to user profile
-                            console.log('Profile clicked:', event.detail);
-                        }}
+                        fixedHeightImages={false}
                     />
 
                 </div>
@@ -67,24 +88,9 @@
                 <!-- Show when item is missing -->
                 <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
                     <h2 class="text-xl font-bold text-gray-900 mb-4">Content Not Available</h2>
-                    <p class="text-gray-600">The artwork content could not be loaded. This may be due to:</p>
-                    <ul class="text-gray-600 mt-2 list-disc list-inside">
-                        <li>Incomplete API response</li>
-                        <li>Missing artwork data</li>
-                        <li>API endpoint issues</li>
-                    </ul>
+                    <p class="text-gray-600">The artwork content could not be loaded.</p>
                 </div>
             {/if}
-            
-            <!-- Download App Section -->
-            <div class="bg-white rounded-lg shadow-sm p-6 text-center">
-                <h2 class="text-xl font-bold text-gray-900 mb-2">Discover Art While You Walk!</h2>
-                <p class="text-gray-600 mb-6">Download Art Collector and start building your own collection!</p>
-                <div class="flex space-x-2 justify-center">
-                    <IosDownloadButton />
-                    <AndroidDownloadButton />
-                </div>
-            </div>
         </div>
     {:else}
         <div class="container mx-auto px-4 text-center">
@@ -109,4 +115,6 @@
             </div>
         </div>
     {/if}
+
+    <StickyFooterCta/>
 </main> 

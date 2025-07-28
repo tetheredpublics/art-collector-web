@@ -9,61 +9,70 @@
     export let actionLabel = '';
     export let actionIcon = '';
     
-    const dispatch = createEventDispatcher();
-    
-    function handleProfileClick() {
-        dispatch('profileClick', { username });
-    }
-    
-    function formatTimeAgo(dateString: string) {
-        if (!dateString) return '';
-        
-        const date = new Date(dateString);
+    function timeAgo(dateParam) {
+        const date = typeof dateParam === 'object' ? dateParam : new Date(dateParam);
         const now = new Date();
-        
-        // Check if date is valid
-        if (isNaN(date.getTime())) return '';
-        
-        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-        
-        if (diffInSeconds < 60) return 'just now';
-        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-        if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-        
-        // Calculate months more accurately
-        const months = Math.floor(diffInSeconds / (30 * 24 * 60 * 60));
-        if (months < 12) return `${months}mo ago`;
-        
-        const years = Math.floor(months / 12);
-        return `${years}y ago`;
+        const seconds = Math.round((now - date) / 1000);
+        const minutes = Math.round(seconds / 60);
+        const hours = Math.round(minutes / 60);
+        const days = Math.round(hours / 24);
+        const months = Math.round(days / 30.44);
+        const years = Math.round(days / 365.25);
+
+        if (seconds < 45) {
+            return 'just now';
+        } else if (seconds < 90) {
+            return 'a minute ago';
+        } else if (minutes < 45) {
+            return minutes + ' minutes ago';
+        } else if (minutes < 90) {
+            return 'an hour ago';
+        } else if (hours < 24) {
+            return hours + ' hours ago';
+        } else if (hours < 42) {
+            return 'a day ago';
+        } else if (days < 30) {
+            return days + ' days ago';
+        } else if (days < 45) {
+            return 'a month ago';
+        } else if (months < 12) {
+            return months + ' months ago';
+        } else if (months < 18) {
+            return 'a year ago';
+        } else {
+            return years + ' years ago';
+        }
     }
     
     const iconMap = {
+        "bundle://IconCollect": "collect",
         "IconCollect": "collect",
+        "bundle://IconDrop": "drop",
         "IconDrop": "drop",
+        "bundle://IconDestroy": "destroy",
         "IconDestroy": "destroy",
     }
 
     const getIconName = (k: string) => iconMap[k as keyof typeof iconMap] || "collect";
 </script>
 
-<div class="flex items-center space-x-2 h-8">
-    <!-- Avatar and Username Section (Clickable) -->
-    <button 
-        class="flex items-center space-x-2"
-        on:click={handleProfileClick}
-    >
+<div class="flex items-center space-x-2 h-8 px-4 md:px-2">
+    <button class="flex items-center space-x-2">
         <!-- Avatar -->
-        <AvatarView url={avatarUrl} {username} size="small" />
+        <AvatarView 
+            url={avatarUrl} 
+            username={username} 
+            size="small" 
+            color={avatarColor}
+        />
         
         <!-- Username and Timestamp -->
         <div class="flex items-baseline space-x-2">
             <span class="text-base font-bold text-black leading-none">
                 {username}
             </span>
-            <span class="text-xs font-bold text-black/48 leading-none">
-                {formatTimeAgo(timestamp)}
+            <span class="text-xs font-bold text-black text-opacity-[.48] leading-none">
+                {timeAgo(timestamp)}
             </span>
         </div>
     </button>

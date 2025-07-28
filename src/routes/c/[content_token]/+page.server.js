@@ -4,6 +4,7 @@ export async function load({ params, fetch }) {
     const { content_token } = params;
 
     let baseUrl = "http://api.artcollectorapp.net"
+    // let baseUrl = "http://localhost:8000"
     
     try {
         const response = await fetch(
@@ -70,6 +71,21 @@ function transformToUIContent(apiData) {
             image_url: collectable.image_url,
             collection: collectable.collection,
         };
+
+        if (collectable.last_activity) {
+            let activity = collectable.last_activity
+            uiActivity = {
+                collector: {
+                    username: activity.collector.username,
+                    avatar_url: activity.collector.avatar_url,
+                    avatar_color: activity.collector.avatar_color
+                },
+                time: activity.time,
+                action_icon: activity.icon,
+                action_label: activity.label,
+            };
+        }
+
     } else if (subject?.type === 'news' && subject?.news) {
         const news = subject.news;
         const newsItem = news.item;

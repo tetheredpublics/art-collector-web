@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 
     import AndroidDownloadButton from "../components/AndroidDownloadButton.svelte";
+	import AndroidWaitlistButton from '../components/AndroidWaitlistButton.svelte';
 	import IosDownloadButton from "../components/IOSDownloadButton.svelte";
 </script>
 
@@ -12,6 +13,6 @@
     <p class="text-base text-gray-600 mb-8">Looks like something went wrong...</p>
     <div class="flex space-x-2 justify-center md:justify-start pb-32">
         <IosDownloadButton/>
-        <AndroidDownloadButton/>
+        <AndroidWaitlistButton/>
     </div>
 </main>

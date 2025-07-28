@@ -3,6 +3,7 @@
 	import IosDownloadButton from "./IOSDownloadButton.svelte";
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
+	import AndroidWaitlistButton from "./AndroidWaitlistButton.svelte";
 
     /** @type {string} */
     export let phoneHeight = "496px";
@@ -85,7 +86,8 @@
 
             <div class="flex space-x-2 justify-center md:justify-start">
                 <IosDownloadButton/>
-                <AndroidDownloadButton/>
+                <AndroidWaitlistButton compact={true}/>
+                <!-- <AndroidDownloadButton/> -->
             </div>
         </div>
     </div>
