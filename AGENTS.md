@@ -24,13 +24,11 @@ A `.env` file at the project root is needed with two private keys:
 
 Without real values, the homepage and static pages (`/collections`, `/download`, `/referral-terms`) still render correctly. Only the share page (`/c/...`) and analytics endpoint require valid secrets.
 
-### Known pre-existing issues
-
-- `npm run lint` exits non-zero due to Prettier formatting warnings across ~44 files and a malformed `static/privacy.html`. This is pre-existing, not caused by setup.
-- `npm run check` reports 11 TypeScript/svelte-check errors (implicit `any` types, missing null checks) and 4 warnings. These are pre-existing.
-- `npm run build` succeeds with warnings (a11y, unused CSS selector, "untrack" import warning from SvelteKit internals).
-
 ### Notes
 
-- The `.npmrc` has `engine-strict=true`; Node.js 18+ works fine.
+- All three checks (`lint`, `check`, `build`) pass cleanly.
+- `static/privacy.html` is excluded from Prettier via `.prettierignore` (auto-generated legal HTML with non-standard tags).
+- The `.npmrc` has `engine-strict=true`; Node.js 22+ is required (set in `package.json` engines).
+- Deploys to Netlify via `@sveltejs/adapter-netlify` (Node 22 set in `netlify.toml`).
 - Homepage SSR data (`/+page.server.js`) fetches live stats from a remote DigitalOcean backend — this may fail or timeout if the remote API is down, but the dev server still starts.
+- The `/about` route intentionally uses `-page.svelte` (not `+page.svelte`) and returns 404.
