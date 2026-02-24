@@ -2,3 +2,6 @@
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Auto-generated legal page (non-standard HTML tags break Prettier)
+static/privacy.html
