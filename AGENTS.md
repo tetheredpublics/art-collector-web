@@ -24,6 +24,15 @@ A `.env` file at the project root is needed with two private keys:
 
 Without real values, the homepage and static pages (`/collections`, `/download`, `/referral-terms`) still render correctly. Only the share page (`/c/...`) and analytics endpoint require valid secrets.
 
+### Git workflow
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full branch, commit, and PR conventions. Key points for agents:
+
+- Branch from `main` with a prefixed name (`feat/`, `fix/`, `chore/`, `docs/`).
+- Make small, atomic commits with clear imperative messages.
+- Run `npm run lint`, `npm run check`, and `npm run build` before pushing — all three must pass.
+- Open a PR against `main` with a descriptive title and short summary of what/why.
+
 ### Notes
 
 - All three checks (`lint`, `check`, `build`) pass cleanly.
