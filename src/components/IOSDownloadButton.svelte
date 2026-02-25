@@ -1,6 +1,6 @@
 <script>
 	import { IOS_DOWNLOAD_URL } from '$lib/constants';
-	import { MixpanelService } from '$lib/mixpannelService';
+	import { MixpanelService } from '$lib/mixpanelService';
 	import { isMobile } from '$lib/utils';
 	import Popover from './Popover.svelte';
 

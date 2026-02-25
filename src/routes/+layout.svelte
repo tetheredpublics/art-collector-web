@@ -76,7 +76,7 @@
 		<a
 			on:click={closeMenu}
 			href="/"
-			class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold"
+			class="text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
 		>
 			Home
 		</a>
@@ -84,34 +84,34 @@
 		<a
 			target="_blank"
 			href="https://ko-fi.com/artcollectorapp"
-			class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold"
+			class="text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
 		>
 			Support Me
 		</a>
 		<a
 			on:click={clickDownload}
 			href="/download"
-			class="border-darkBlue hover:bg-darkBlue border-2 font-bold shadow-blue w-full md:max-w-40 max-w-full bg-primary text-xs rounded-md text-white py-2 px-4"
+			class="border-darkBlue hover:bg-darkBlue border-2 font-bold shadow-blue w-full md:max-w-40 max-w-full bg-primary text-xs rounded-md text-white py-3 md:py-2 px-4"
 		>
 			Download
 		</a>
 		<a
 			target="_blank"
 			href="https://www.instagram.com/artcollectorapp"
-			class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold"
+			class="md:hidden text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
 		>
 			Instagram
 		</a>
 		<a
 			href="/privacy.html"
-			class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold"
+			class="md:hidden text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
 		>
 			Privacy
 		</a>
 		<a
 			target="_blank"
 			href="https://forms.gle/N3R8maka3Eg8Por27"
-			class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold"
+			class="md:hidden text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
 		>
 			Feedback
 		</a>
@@ -128,7 +128,7 @@
 		imageAlt="ticket to artistic adventure"
 	>
 		<p class="text-sm/loose font-semibold text-white opacity-80 pb-8 md:pb-12">
-			Download today - The first 500 users win an award!
+			Download today and start your art collection
 		</p>
 		<div class="flex space-x-2 justify-center">
 			<IosDownloadButton />
