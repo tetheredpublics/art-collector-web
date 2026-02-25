@@ -13,6 +13,7 @@
 	let scrollY = 0;
 	let isScrolled = false;
 	let isScrollUpdateQueued = false;
+	/** @type {number | null} */
 	let scrollAnimationFrame = null;
 
 	function toggleMenu() {
