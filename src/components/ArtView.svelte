@@ -7,28 +7,28 @@
 	export let collector: any = null;
 	export let activity: any = null;
 	export let fixedHeightImages: boolean = false;
-	export let coverImages: boolean = false;
+	export let normalizeImageAspect: boolean = false;
 </script>
 
 <div class="flex flex-col space-y-4 md:w-[600px] max-w-full mx-auto pb-4">
 	{#if item?.image_url}
 		<div
 			class={`w-[600px] max-w-full bg-[#EDEDEA] flex items-center justify-center md:rounded-md ${
-				coverImages ? 'aspect-[4/3] overflow-hidden' : ''
+				normalizeImageAspect ? 'aspect-[4/3] p-3' : ''
 			}`}
 		>
 			<img
 				src={item.image_url}
 				alt={item.title}
-				class={coverImages
-					? 'h-full w-full object-cover'
+				class={normalizeImageAspect
+					? 'h-full w-full object-contain'
 					: `${fixedHeightImages ? 'h-[364px]' : 'max-h-[364px]'} w-auto object-contain`}
 			/>
 		</div>
 	{:else}
 		<div
 			class={`w-[600px] max-w-full bg-[#EDEDEA] flex items-center justify-center ${
-				coverImages ? 'aspect-[4/3]' : 'h-[400px]'
+				normalizeImageAspect ? 'aspect-[4/3]' : 'h-[400px]'
 			}`}
 		>
 			<span class="text-gray-500">No image available</span>

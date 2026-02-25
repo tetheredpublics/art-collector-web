@@ -31,7 +31,7 @@
 							action_label: newsItem.activity.label,
 							action_icon: newsItem.activity.icon
 						}}
-						coverImages={true}
+						normalizeImageAspect={true}
 					/>
 				</div>
 			{/each}
