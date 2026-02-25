@@ -48,6 +48,7 @@
 				body={STRINGS.homeInfo2.body}
 				imageSrc="./images/marketer.png"
 				imageAlt={STRINGS.homeInfo2.imageAlt}
+				imageLoading="lazy"
 				ctaLabel="Recent Highlights"
 				ctaUrl="/news/highlights"
 			/>
@@ -57,6 +58,7 @@
 				body={STRINGS.homeInfo3.body}
 				imageSrc="./images/buildings@0.5x.png"
 				imageAlt={STRINGS.homeInfo3.imageAlt}
+				imageLoading="lazy"
 				ctaLabel="Learn more"
 				ctaUrl="/collections"
 			/>
@@ -66,6 +68,7 @@
 				body={STRINGS.homeInfo1.body}
 				imageSrc="./images/artblock@0.5x.png"
 				imageAlt={STRINGS.homeInfo1.imageAlt}
+				imageLoading="lazy"
 				ctaLabel="Join the Community"
 				ctaUrl="/download"
 			/>

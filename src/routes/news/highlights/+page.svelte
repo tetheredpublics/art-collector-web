@@ -24,6 +24,7 @@
 					action_icon: newsItem.activity.icon
 				}}
 				fixedHeightImages={true}
+				imageLoading="lazy"
 			/>
 		</div>
 	{/each}

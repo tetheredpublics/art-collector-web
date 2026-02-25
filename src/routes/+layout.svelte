@@ -12,6 +12,8 @@
 
 	let scrollY = 0;
 	let isScrolled = false;
+	let isScrollUpdateQueued = false;
+	let scrollAnimationFrame = null;
 
 	function toggleMenu() {
 		menuIsOpen = !menuIsOpen;
@@ -33,15 +35,27 @@
 		closeMenu();
 	}
 
-	const handleScroll = () => {
+	const updateScrollState = () => {
 		scrollY = window.scrollY;
 		isScrolled = scrollY > 0;
+		isScrollUpdateQueued = false;
+		scrollAnimationFrame = null;
+	};
+
+	const handleScroll = () => {
+		if (typeof window === 'undefined' || isScrollUpdateQueued) {
+			return;
+		}
+
+		isScrollUpdateQueued = true;
+		scrollAnimationFrame = window.requestAnimationFrame(updateScrollState);
 	};
 
 	// Attach the scroll event listener when the component mounts
 	onMount(() => {
 		if (typeof window !== 'undefined') {
 			window.addEventListener('scroll', handleScroll);
+			handleScroll();
 		}
 	});
 
@@ -49,6 +63,9 @@
 	onDestroy(() => {
 		if (typeof window !== 'undefined') {
 			window.removeEventListener('scroll', handleScroll);
+			if (scrollAnimationFrame !== null) {
+				window.cancelAnimationFrame(scrollAnimationFrame);
+			}
 		}
 	});
 </script>

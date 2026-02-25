@@ -7,6 +7,7 @@
 	export let collector: any = null;
 	export let activity: any = null;
 	export let fixedHeightImages: boolean = false;
+	export let imageLoading: 'eager' | 'lazy' = 'eager';
 </script>
 
 <div class="flex flex-col space-y-4 md:w-[600px] max-w-full mx-auto pb-4">
@@ -15,6 +16,7 @@
 			<img
 				src={item.image_url}
 				alt={item.title}
+				loading={imageLoading}
 				class="{fixedHeightImages ? 'h-[364px]' : 'max-h-[364px]'} w-auto object-contain"
 			/>
 		</div>
