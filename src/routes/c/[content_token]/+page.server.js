@@ -1,14 +1,11 @@
-import { API_KEY } from '$env/static/private';
+import { API_KEY, ART_COLLECTOR_API_URL } from '$env/static/private';
 
 export async function load({ params, fetch }) {
 	const { content_token } = params;
 
-	let baseUrl = 'http://api.artcollectorapp.net';
-	// let baseUrl = "http://localhost:8000"
-
 	try {
 		const response = await fetch(
-			`${baseUrl}/api/1/collector/1/shortlink/${content_token}?verbose=true`,
+			`${ART_COLLECTOR_API_URL}/api/1/collector/1/shortlink/${content_token}?verbose=true`,
 			{
 				method: 'GET',
 				headers: {

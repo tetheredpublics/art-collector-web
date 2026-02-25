@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let href: string = 'https://forms.gle/kHuwRg63drVoTgCF9';
+	import { ANDROID_WAITLIST_URL } from '$lib/constants';
+
+	export let href: string = ANDROID_WAITLIST_URL;
 	export let compact: boolean = true;
 
 	let label: string = 'Join Android Waitlist';
