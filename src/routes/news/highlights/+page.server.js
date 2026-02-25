@@ -1,8 +1,6 @@
 /** @type {import('../../$types').PageServerLoad} */
 export async function load() {
 	return fetchHighlights().catch((error) => {
-		console.log('whats happening');
-		console.log(error);
 		throw error(404, 'Not found');
 	});
 }

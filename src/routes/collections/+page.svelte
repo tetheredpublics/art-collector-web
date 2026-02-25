@@ -31,7 +31,7 @@
 
 <SEO title="Collections" />
 
-<main class="pb-32 pt-16">
+<main class="pb-16 md:pb-20 pt-16">
 	<div class="p-4 max-w-4xl mx-auto">
 		<div class="mb-8">
 			<h1 class="text-4xl font-black text-gray-800 mb-8">Our Collections</h1>

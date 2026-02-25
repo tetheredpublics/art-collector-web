@@ -23,17 +23,14 @@ export async function load({ params, fetch }) {
 		}
 
 		const data = await response.json();
-		console.log('Raw API data:', data);
 
 		// Transform API data into unified UIContent model
 		const uiContent = transformToUIContent(data);
-		console.log('Transformed UI content:', uiContent);
 
 		return {
 			content: uiContent
 		};
-	} catch (error) {
-		console.error('Error fetching shortlink data:', error);
+	} catch {
 		return {
 			error: 'Failed to load content',
 			content: null
@@ -47,7 +44,6 @@ export async function load({ params, fetch }) {
  * @returns {Object} - Unified content model
  */
 function transformToUIContent(apiData) {
-	console.log('Transforming API data:', apiData);
 	const { collector, subject } = apiData;
 
 	// Transform collector data
@@ -118,6 +114,5 @@ function transformToUIContent(apiData) {
 		activity: uiActivity
 	};
 
-	console.log('Transformation result:', result);
 	return result;
 }

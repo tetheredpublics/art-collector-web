@@ -8,7 +8,6 @@ import { get } from 'svelte/store';
 async function trackEvent(name, properties) {
 	const consent = get(consentGiven);
 	if (!consent) {
-		console.log('Consent not given, skipping API call');
 		return;
 	}
 	try {
@@ -20,10 +19,10 @@ async function trackEvent(name, properties) {
 			body: JSON.stringify({ name, properties })
 		});
 		if (!response.ok) {
-			console.error('Failed to send event to server');
+			return;
 		}
-	} catch (error) {
-		console.error('Error sending event to server:', error);
+	} catch {
+		return;
 	}
 }
 
