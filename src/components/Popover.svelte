@@ -4,6 +4,9 @@
 
 	export let visible = false;
 
+	/**
+	 * @param {HTMLElement} node
+	 */
 	function portal(node) {
 		if (typeof document === 'undefined') {
 			return {};
@@ -23,6 +26,9 @@
 		visible = false;
 	}
 
+	/**
+	 * @param {MouseEvent} event
+	 */
 	function handleClickOutside(event) {
 		if (!(event.target instanceof Element)) {
 			return;

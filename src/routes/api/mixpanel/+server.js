@@ -20,7 +20,7 @@ export async function POST({ request }) {
 					return;
 				}
 
-				resolve();
+				resolve(true);
 			});
 		});
 
