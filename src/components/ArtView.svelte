@@ -42,5 +42,4 @@
 	{#if collector}
 		<MicroCta friend={collector.username} />
 	{/if}
-	<!-- <DownloadCta device={device} friend={collector.username} /> -->
 </div>
