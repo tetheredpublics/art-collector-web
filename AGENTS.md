@@ -40,4 +40,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full branch, commit, and PR con
 - The `.npmrc` has `engine-strict=true`; Node.js 22+ is required (set in `package.json` engines).
 - Deploys to Netlify via `@sveltejs/adapter-netlify` (Node 22 set in `netlify.toml`).
 - Homepage SSR data (`/+page.server.js`) fetches live stats from a remote DigitalOcean backend — this may fail or timeout if the remote API is down, but the dev server still starts.
-- The `/about` route intentionally uses `-page.svelte` (not `+page.svelte`) and returns 404.
+- **Hidden pages convention**: Files named `-page.svelte` (dash prefix instead of `+`) are intentionally hidden/disabled routes. SvelteKit only recognises `+page.svelte`, so the dash prefix effectively disables the route without deleting the file. Example: `src/routes/about/-page.svelte` returns 404 on purpose. Do not "fix" these to `+page.svelte`.
