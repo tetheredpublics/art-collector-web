@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SharedContentPageData } from '$lib/types';
 	import SEO from '../../../components/SEO.svelte';
 	import IosDownloadButton from '../../../components/IOSDownloadButton.svelte';
 	import AndroidDownloadButton from '../../../components/AndroidDownloadButton.svelte';
@@ -6,7 +7,7 @@
 	import AvatarView from '../../../components/AvatarView.svelte';
 	import StickyFooterCta from '../../../components/StickyFooterCta.svelte';
 
-	export let data: any;
+	export let data: SharedContentPageData;
 
 	$: content = data.content;
 	$: error = data.error;
