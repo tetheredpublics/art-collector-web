@@ -22,7 +22,7 @@
 
 <SEO title="Home" />
 <svelte:head>
-	{@html `<script type="application/ld+json">${organizationSchemaJson}</script>`}
+	{@html `<script type="application/ld+json">${organizationSchemaJson}</${'script'}>`}
 </svelte:head>
 
 <main>

@@ -3,7 +3,7 @@
 
 	const siteTitle = 'Art Collector App';
 
-	export let title;
+	export let title = '';
 	export let description =
 		'Step into art; Discover, collect, trade and even decide the fate of great art. Download today to join the game!';
 	export let image = 'https://artcollectorapp.net/images/logo@0.5x.png';
