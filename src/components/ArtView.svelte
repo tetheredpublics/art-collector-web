@@ -29,16 +29,21 @@
 	{#if activity}
 		<CreditBanner
 			username={activity.collector?.username}
-			avatarUrl={activity.collector?.avatar_url}
-			avatarColor={activity.collector?.avatar_color}
-			timestamp={activity.time}
-			actionLabel={activity.action_label}
-			actionIcon={activity.action_icon}
+			avatarUrl={activity.collector?.avatar_url ?? undefined}
+			avatarColor={activity.collector?.avatar_color ?? undefined}
+			timestamp={activity.time ?? undefined}
+			actionLabel={activity.action_label ?? undefined}
+			actionIcon={activity.action_icon ?? undefined}
 		/>
 	{/if}
 
 	<!-- Art Label View -->
-	<ArtLabelView title={item?.title} year={item?.year} artist={item?.artist} medium={item?.medium} />
+	<ArtLabelView
+		title={item?.title ?? undefined}
+		year={item?.year != null ? String(item.year) : undefined}
+		artist={item?.artist ?? undefined}
+		medium={item?.medium ?? undefined}
+	/>
 
 	{#if collector}
 		<MicroCta friend={collector.username} />
