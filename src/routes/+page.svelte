@@ -1,11 +1,8 @@
 <script>
 	import SEO from '../components/SEO.svelte';
 	import DownloadHero from '../components/DownloadHero.svelte';
-	import InfoCard from '../components/InfoCard.svelte';
 	import InfoFlat from '../components/InfoFlat.svelte';
 	import AppStats from '../components/AppStats.svelte';
-	import AndroidDownloadButton from '../components/AndroidDownloadButton.svelte';
-	import IosDownloadButton from '../components/IOSDownloadButton.svelte';
 	import Testimonial from '../components/Testimonial.svelte';
 	import { STRINGS } from '$lib';
 
@@ -74,9 +71,11 @@
 			/>
 		</div>
 		<div class="bg-appBeige px-1 md:px-4 py-4 pb-16 space-y-4 border-y-2 border-[#ADADA9]">
-			<div class="md:max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8 col-auto mx-auto divide-y divide-dashed divide-gray-400 md:divide-none">
+			<div
+				class="md:max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8 col-auto mx-auto divide-y divide-dashed divide-gray-400 md:divide-none"
+			>
 				{#each STRINGS.testimonials as testimonial}
-				<Testimonial item={testimonial} />
+					<Testimonial item={testimonial} />
 				{/each}
 			</div>
 		</div>
