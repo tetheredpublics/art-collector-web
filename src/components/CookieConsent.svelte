@@ -1,5 +1,5 @@
 <script>
-	import { MixpanelService } from '$lib/mixpannelService';
+	import { MixpanelService } from '$lib/mixpanelService';
 	import { onMount } from 'svelte';
 	import { consentGiven, hasConsentResponse } from '../lib/stores';
 
@@ -15,7 +15,6 @@
 	});
 
 	const handleCookieConsent = (/** @type {boolean} */ accept) => {
-		console.log('consent');
 		localStorage.setItem('cookieConsent', accept ? 'true' : 'false');
 		if (accept) {
 			consentGiven.set(true);

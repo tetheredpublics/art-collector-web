@@ -105,7 +105,7 @@ Follow the conventions in AGENTS.md and CONTRIBUTING.md.
 **PR title:** `fix: Design polish — card layouts, copy updates, mobile UX`
 **Risk:** Low
 
-- [ ] **E1** Normalise artwork card image aspect ratios in `/news/highlights` — use a fixed aspect-ratio container with `object-cover`
+- [ ] **E1** Normalise artwork card image aspect ratios in `/news/highlights` — use a fixed aspect-ratio container with `object-contain` so the full artwork stays visible (no cropping)
 - [ ] **E2** Add a page heading to `/news/highlights` (e.g. "Recent Highlights") — currently jumps straight into the card grid with no context
 - [ ] **E3** Remove outdated footer CTA copy — replace "Download today - The first 500 users win an award!" with "Download today and start your art collection" in `src/routes/+layout.svelte`
 - [ ] **E4** Fix the large empty gap between the last collection entry and the footer on `/collections`
