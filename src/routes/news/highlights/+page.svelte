@@ -1,8 +1,11 @@
 <script>
+	import SEO from '../../../components/SEO.svelte';
 	import ArtView from '../../../components/ArtView.svelte';
 
 	export let data;
 </script>
+
+<SEO title="Recent Highlights" />
 
 <div
 	class="py-4 md:p-8 xl:p-16 py-8 md:py-16 max-w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 col-auto mx-auto"

@@ -7,9 +7,23 @@
 	import { STRINGS } from '$lib';
 
 	export let data;
+
+	const organizationSchema = {
+		'@context': 'https://schema.org',
+		'@type': 'Organization',
+		name: 'Art Collector App',
+		url: 'https://artcollectorapp.net',
+		logo: 'https://artcollectorapp.net/images/logo@0.5x.png',
+		description:
+			'Step into art; Discover, collect, trade and even decide the fate of great art. Download today to join the game!'
+	};
+	const organizationSchemaJson = JSON.stringify(organizationSchema).replace(/</g, '\\u003c');
 </script>
 
 <SEO title="Home" />
+<svelte:head>
+	{@html `<script type="application/ld+json">${organizationSchemaJson}</script>`}
+</svelte:head>
 
 <main>
 	<div class="space-y-8">
