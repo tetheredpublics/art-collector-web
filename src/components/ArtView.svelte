@@ -8,19 +8,30 @@
 	export let collector: SharedCollector | null = null;
 	export let activity: SharedActivity | null = null;
 	export let fixedHeightImages: boolean = false;
+	export let normalizeImageAspect: boolean = false;
 </script>
 
 <div class="flex flex-col space-y-4 md:w-[600px] max-w-full mx-auto pb-4">
 	{#if item?.image_url}
-		<div class="w-[600px] max-w-full bg-[#EDEDEA] flex items-center justify-center md:rounded-md">
+		<div
+			class={`w-[600px] max-w-full bg-[#EDEDEA] flex items-center justify-center md:rounded-md ${
+				normalizeImageAspect ? 'aspect-[4/3] p-3' : ''
+			}`}
+		>
 			<img
 				src={item.image_url}
 				alt={item.title ?? 'Artwork image'}
-				class="{fixedHeightImages ? 'h-[364px]' : 'max-h-[364px]'} w-auto object-contain"
+				class={normalizeImageAspect
+					? 'h-full w-full object-contain'
+					: `${fixedHeightImages ? 'h-[364px]' : 'max-h-[364px]'} w-auto object-contain`}
 			/>
 		</div>
 	{:else}
-		<div class="w-[600px] max-w-full h-[400px] bg-[#EDEDEA] flex items-center justify-center">
+		<div
+			class={`w-[600px] max-w-full bg-[#EDEDEA] flex items-center justify-center ${
+				normalizeImageAspect ? 'aspect-[4/3]' : 'h-[400px]'
+			}`}
+		>
 			<span class="text-gray-500">No image available</span>
 		</div>
 	{/if}
@@ -48,5 +59,4 @@
 	{#if collector}
 		<MicroCta friend={collector.username} />
 	{/if}
-	<!-- <DownloadCta device={device} friend={collector.username} /> -->
 </div>

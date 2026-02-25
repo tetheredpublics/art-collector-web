@@ -1,5 +1,5 @@
 <script>
-	import { MixpanelService } from '$lib/mixpannelService';
+	import { MixpanelService } from '$lib/mixpanelService';
 	import Popover from './Popover.svelte';
 	let showPopover = false;
 
@@ -20,7 +20,7 @@
 
 <Popover bind:visible={showPopover}>
 	<div class="text-center m-4">
-		<h2 class="text-2xl font-black text-gray-800 mb-2">Comming Soon...</h2>
+		<h2 class="text-2xl font-black text-gray-800 mb-2">Coming Soon...</h2>
 		<p class="text-base/loose font-bold text-gray-600 mb-4">
 			Encourage our Android developers to work faster,
 			<a href="https://www.instagram.com/artcollectorapp/"> Follow us on Instagram for updates </a>
