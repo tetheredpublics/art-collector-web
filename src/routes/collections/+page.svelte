@@ -45,6 +45,7 @@
 					body={collection.description}
 					imageSrc={collection.image_src}
 					imageAlt={collection.image_alt}
+					imageLoading="lazy"
 					learnMoreUrl={collection.url}
 				/>
 				<!-- <div class="max-w-4xl mx-4 md:mx-auto border-b-appGreyBorder border-b-2"></div> -->

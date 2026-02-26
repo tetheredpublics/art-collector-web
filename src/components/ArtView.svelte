@@ -7,6 +7,7 @@
 	export let collector: any = null;
 	export let activity: any = null;
 	export let fixedHeightImages: boolean = false;
+	export let imageLoading: 'eager' | 'lazy' = 'eager';
 	export let normalizeImageAspect: boolean = false;
 </script>
 
@@ -20,6 +21,7 @@
 			<img
 				src={item.image_url}
 				alt={item.title}
+				loading={imageLoading}
 				class={normalizeImageAspect
 					? 'h-full w-full object-contain'
 					: `${fixedHeightImages ? 'h-[364px]' : 'max-h-[364px]'} w-auto object-contain`}
