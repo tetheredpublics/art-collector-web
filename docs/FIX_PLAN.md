@@ -1,164 +1,308 @@
-# Fix Plan
+# Fix Plan — Leaderboard Feature
 
-All improvement work for the Art Collector website, organised into independent work streams that can run in parallel.
+Implementation plan for the `/leaderboard` page, broken into small focused tasks.
 
-## Workflow (for all streams)
+Full feature specification: [`LEADERBOARD_FEATURE_SPEC.MD`](../LEADERBOARD_FEATURE_SPEC.MD)
 
-Each stream follows the same process. Use this as the base prompt for any agent session, appending the specific stream's task list.
+---
 
-### Universal agent prompt
+## How This Plan Works
+
+Each **task** (e.g. A.1, B.2) is a single, focused agent session that produces one commit. Tasks are small enough that an agent can complete one in a single turn without losing context.
+
+**Branching:** One branch per workstream. Sequential tasks within a workstream commit to the same branch. Each agent **must pull the latest before starting** so it picks up the previous task's work.
+
+| Workstream        | Branch                  |
+| ----------------- | ----------------------- |
+| A (Data & API)    | `feat/leaderboard-data` |
+| B (UI Components) | `feat/leaderboard-ui`   |
+| C (Integration)   | `feat/leaderboard-page` |
+
+**Rules:**
+
+- Within a workstream, run tasks **sequentially** (A.1 → A.2 → A.3 → A.4). Each agent pulls the branch first.
+- Workstreams A and B have **zero file overlap** — run them in parallel on separate branches.
+- Workstream C starts after A and B are both merged into `main`. Branch `feat/leaderboard-page` from `main` at that point.
+
+---
+
+## Dependency Graph
 
 ```
-Follow the conventions in AGENTS.md and CONTRIBUTING.md.
+         WORKSTREAM A                    WORKSTREAM B
+         (feat/leaderboard-data)         (feat/leaderboard-ui)
 
-1. Branch from main using the branch name specified in the stream heading.
-2. Read through every file listed in the stream before making changes.
-3. Complete each numbered task in order.
-4. After all changes, run:
-   npm run format
-   npm run lint
-   npm run check
-   npm run build
-   All four must pass with zero errors.
-5. Start the dev server (npm run dev) and verify affected pages still load correctly.
-6. For visual changes (Stream E), check both desktop and mobile layouts in the browser.
-7. Commit with clear, imperative messages. One commit per logical task is fine, or group related tasks.
-8. Push and open a PR against main. PR title should match the stream heading.
+         A.1  Types                      B.1  Scaffold + simple components
+          │                               │
+          ▼                              ┌┴┐
+         A.2  Utilities                 B.2  B.3  (parallel OK)
+          │                              │   │
+          ▼                              └┬──┘
+         A.3  Transformer                │
+          │                              ▼
+          ▼                             B.3  Layout components
+         A.4  Server routes
+          │                              │
+          └──────────┬───────────────────┘
+                     ▼
+              WORKSTREAM C
+              (feat/leaderboard-page)
+
+              C.1  Page wiring + refresh
+               │
+               ▼
+              C.2  Nav link + SEO
+               │
+               ▼
+              C.3  QA + accessibility
 ```
 
-### Running streams in parallel
+---
 
-- Each stream is independent — assign separate agent sessions to different streams.
-- All streams branch from `main` and touch different files, so merge conflicts are minimal.
-- See the parallelisation matrix at the bottom for conflict notes.
+## Workstream A — Data & API Layer
+
+**Branch:** `feat/leaderboard-data`
+**First task creates the branch from `main`. Subsequent tasks pull before starting.**
+
+### Task A.1 — TypeScript types
+
+**Branch:** `feat/leaderboard-data` (create from `main`)
+**Scope:** Edit `src/lib/types.ts` only.
+
+Add all leaderboard-related interfaces:
+
+- **API response types:** `LeaderboardResponse`, `LeaderboardCategoryResponse`, `LeaderboardEntryResponse`, `LeaderboardMetricResponse` — model the raw JSON from `GET /api/1/collector/4/leaderboard` (spec §4.1)
+- **Display state types:** `LeaderboardDisplayState`, `CategoryDisplay`, `EntryDisplay`, `MetricDisplay` — the UI-ready shapes (spec §4.2)
+
+**Done when:** `npm run check` passes, types are exported.
 
 ---
 
-## Stream A: Dead code cleanup
+### Task A.2 — Utility functions
 
-**Branch:** `chore/cleanup-dead-code`
-**PR title:** `chore: Clean up dead code and remove unused dependencies`
-**Risk:** Low
+**Branch:** `feat/leaderboard-data` (pull latest first)
+**Scope:** Create `src/lib/leaderboard.js`.
 
-- [ ] **A1** Rename `src/lib/mixpannelService.js` → `src/lib/mixpanelService.js` and update all imports across the codebase
-- [ ] **A2** Delete unused components: `src/components/SmallCard.svelte`, `src/components/SmallButton.svelte`
-- [ ] **A3** Remove the commented-out `DownloadCTA` import in `src/components/ArtView.svelte`
-- [ ] **A4** Remove all `console.log` / `console.error` statements from production code in:
-  - `src/routes/+page.server.js`
-  - `src/routes/news/highlights/+page.server.js`
-  - `src/routes/c/[content_token]/+page.server.js`
-  - `src/components/CookieConsent.svelte`
-  - `src/lib/mixpanelService.js` (after rename)
-- [ ] **A5** Remove the unused Moment.js CDN `<script>` tag from `src/app.html` (loaded but never referenced)
-- [ ] **A6** Fix any remaining typos encountered during cleanup (e.g. "Comming Soon" → "Coming Soon" in `AndroidDownloadButton.svelte`)
+Implement and export these pure functions:
 
----
+| Function                                        | Purpose                                                                                                                                                                | Spec ref |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `resolveAvatarColor(apiKey)`                    | Map `"AppRed"` → `"#CF2D2D"` etc. Fallback `#EDEDEA`. Uses a static `AVATAR_COLOR_MAP` of all 13 keys from Tailwind config.                                            | §5.1     |
+| `darkenColor(hex, amount)`                      | Mix a hex colour toward black by ratio (0–1). Returns hex string.                                                                                                      | §5.1     |
+| `resolveIconSrc(iconString)`                    | Parse `asset://`, `bundle://`, `system://`, `https://`, bare-name prefixes. Map known asset names via `ICON_ASSET_MAP`. Unknown → placeholder. HTTP URLs pass through. | §5.2     |
+| `formatWeekDateRange(weekStarting, weekEnding)` | Three formatting rules from spec. Use `Intl.DateTimeFormat`, no external deps.                                                                                         | §2.2.1   |
+| `formatWinnersTime(weekEnding)`                 | Format as `"Friday 00:00"`. Use `Intl.DateTimeFormat`.                                                                                                                 | §2.2     |
 
-## Stream B: Performance quick wins
-
-**Branch:** `fix/performance-quick-wins`
-**PR title:** `fix: Performance — lazy loading, deferred scripts, font-display`
-**Risk:** Low
-
-- [x] **B1** Defer non-critical scripts in `src/app.html` — add `async` or `defer` to GTM and GA `<script>` tags as appropriate
-- [ ] **B2** Add `loading="lazy"` to below-fold images (do NOT add to hero or logo):
-  - Info section illustrations in `src/routes/+page.svelte`
-  - Artwork images in `src/routes/news/highlights/+page.svelte`
-  - Collection building images in `src/routes/collections/+page.svelte`
-- [ ] **B3** Append `&display=swap` to the Google Fonts URL in `src/app.html`
-- [ ] **B4** Throttle scroll handlers in `src/routes/+layout.svelte` and `src/components/StickyFooterCta.svelte` using a `requestAnimationFrame` guard
+**Done when:** `npm run lint` + `npm run check` pass.
 
 ---
 
-## Stream C: Server-side fixes
+### Task A.3 — Response transformer
 
-**Branch:** `fix/server-code-issues`
-**PR title:** `fix: Server-side — correct packages, centralise config, fix error handling`
-**Risk:** Medium
+**Branch:** `feat/leaderboard-data` (pull latest first — needs A.2's utilities)
+**Scope:** Edit `src/lib/leaderboard.js` (append to the file created in A.2).
 
-- [ ] **C1** Replace `mixpanel-browser` with the `mixpanel` Node.js package in `src/routes/api/mixpanel/+server.js` (it's a server endpoint using a browser library). Only remove `mixpanel-browser` from `package.json` if nothing else imports it
-- [ ] **C2** Deduplicate `isMobile` — `src/components/StickyFooterCta.svelte` has its own copy. Replace with an import from `$lib/utils`
-- [ ] **C3** Centralise download URLs — create `src/lib/constants.js` exporting `IOS_DOWNLOAD_URL` and `ANDROID_WAITLIST_URL`. Update all files that hardcode these URLs (`+layout.svelte`, `IOSDownloadButton.svelte`, `AndroidWaitlistButton.svelte`)
-- [ ] **C4** Move hardcoded backend API URLs to env vars — create `BACKEND_API_URL` and `ART_COLLECTOR_API_URL` in `.env`, import from `$env/static/private` in the three server files. Update `AGENTS.md` to document the new vars
-- [ ] **C5** Fix error handling in `src/routes/+page.server.js` and `src/routes/news/highlights/+page.server.js` — `error()` is called without being imported from `@sveltejs/kit`
-- [ ] **C6** Remove `svelte-portal` dependency — only used in `src/components/Popover.svelte`. Replace `use:portal={'body'}` with native DOM mounting or a simple Svelte action
+Implement and export `transformLeaderboard(response)`:
 
----
+- Calls the utilities from A.2 to produce a `LeaderboardDisplayState` from raw API JSON
+- Full mapping table is in spec §4.3
+- Key transforms: `points × 100`, `rank_delta` → `"up"/"down"/"same"`, avatar colour + divider, icon resolution, empty-message fallbacks
 
-## Stream D: SEO improvements
-
-**Branch:** `feat/improve-seo`
-**PR title:** `feat: SEO — Twitter Cards, canonical URLs, structured data`
-**Risk:** Low
-
-- [ ] **D1** Add Twitter Card meta tags to `src/components/SEO.svelte` (`twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`)
-- [ ] **D2** Add `<link rel="canonical">` and `og:url` using `$page.url` in `SEO.svelte`
-- [ ] **D3** Fix the default OG image to use an absolute URL (`https://artcollectorapp.net/images/logo@0.5x.png`) instead of the relative path
-- [ ] **D4** Add `<SEO>` component to pages missing it: `/collections`, `/news/highlights`, `/referral-terms`
-- [ ] **D5** Add JSON-LD `Organization` schema to the homepage
+**Done when:** `npm run lint` + `npm run check` pass.
 
 ---
 
-## Stream E: Design & copy polish
+### Task A.4 — Server routes
 
-**Branch:** `fix/design-and-copy-polish`
-**PR title:** `fix: Design polish — card layouts, copy updates, mobile UX`
-**Risk:** Low
+**Branch:** `feat/leaderboard-data` (pull latest first)
+**Scope:** Create two new files:
 
-- [ ] **E1** Normalise artwork card image aspect ratios in `/news/highlights` — use a fixed aspect-ratio container with `object-contain` so the full artwork stays visible (no cropping)
-- [ ] **E2** Add a page heading to `/news/highlights` (e.g. "Recent Highlights") — currently jumps straight into the card grid with no context
-- [ ] **E3** Remove outdated footer CTA copy — replace "Download today - The first 500 users win an award!" with "Download today and start your art collection" in `src/routes/+layout.svelte`
-- [ ] **E4** Fix the large empty gap between the last collection entry and the footer on `/collections`
-- [ ] **E5** Increase vertical padding on mobile menu links in `src/routes/+layout.svelte` for better tap targets
+1. `src/routes/leaderboard/+page.server.js` — SSR load function. Follow the pattern in `src/routes/+page.server.js`. Fetch `${BACKEND_API_URL}/api/1/collector/4/leaderboard` with `Content-Type` + optional `x-api-key`. Return `{ leaderboard: <raw JSON> }`. On failure: `throw error(status, 'Failed to load leaderboard')`.
 
----
+2. `src/routes/api/leaderboard/+server.js` — thin GET proxy for client-side 30 s polling. Same backend call, pipes JSON back. Returns `200` with JSON body, or upstream error status.
 
-## Stream F: TypeScript & Tailwind standardisation
-
-**Branch:** `chore/standardise-types-and-theme`
-**PR title:** `chore: Standardise TypeScript types and Tailwind colour palette`
-**Risk:** Medium
-
-- [ ] **F1** Fix `@ts-ignore` in `src/components/Popover.svelte` — add a proper `MouseEvent` type annotation instead
-- [ ] **F2** Replace `any` types with proper interfaces in `src/components/ArtView.svelte` and `src/routes/c/[content_token]/+page.svelte`. Consider creating shared types in `src/lib/types.ts`
-- [ ] **F3** Clean up duplicate Tailwind colours in `tailwind.config.js` — remove the legacy unprefixed names (`beige`, `grey`, `background`, `greyBorder`) and update all component references to use the `app*` equivalents
+**Done when:** `npm run lint` + `npm run check` + `npm run build` pass.
 
 ---
 
-## Parallelisation matrix
+## Workstream B — UI Components
 
-| Stream | Branch                              | Risk   | Can run in parallel with |
-| ------ | ----------------------------------- | ------ | ------------------------ |
-| **A**  | `chore/cleanup-dead-code`           | Low    | B, D, E, F               |
-| **B**  | `fix/performance-quick-wins`        | Low    | A, C, D, E, F            |
-| **C**  | `fix/server-code-issues`            | Medium | B, D, E, F               |
-| **D**  | `feat/improve-seo`                  | Low    | A, B, C, E, F            |
-| **E**  | `fix/design-and-copy-polish`        | Low    | A, B, C, D, F            |
-| **F**  | `chore/standardise-types-and-theme` | Medium | B, D, E                  |
+**Branch:** `feat/leaderboard-ui`
+**First task creates the branch from `main`. Subsequent tasks pull before starting.**
 
-### Conflict notes
+### Task B.1 — Scaffold, assets, and simple components
 
-- **A ↔ C**: Both touch `src/lib/mixpanelService.js` and server files — run A first or resolve merge conflicts
-- **A ↔ F**: Both touch components — low conflict risk but review diffs
-- All other combinations are safe to run fully in parallel
+**Branch:** `feat/leaderboard-ui` (create from `main`)
+**Scope:** Create `src/components/leaderboard/` directory and the following files:
 
-### Recommended parallel groups
+1. **Icon assets** — Create `static/icons/leaderboard/` with a `trophy.png` (placeholder OK until real asset available). Confirm existing `collect.png`, `drop.png`, `destroy.png` paths in `static/icons/`.
 
-- **Group 1** (run together): A + B + D + E
-- **Group 2** (run after Group 1 merges): C + F
+2. **EmptyState.svelte** — Per-column empty message (spec §2.5). Props: `title`, `body`. Centered text, `py-12`, gray tones.
+
+3. **LoadingState.svelte** — Centered spinner. Simple CSS animation, match site aesthetic.
+
+4. **ErrorState.svelte** — Error message + "Retry" button. Dispatches a `retry` event. Button styled `bg-primary text-white font-bold rounded-md px-6 py-2`.
+
+**Done when:** `npm run lint` + `npm run check` pass. Components render without errors.
 
 ---
 
-## Discovered Issues
+### Task B.2 — EntryCard component
 
-### `.prettierignore` missing `static/privacy.html`
+**Branch:** `feat/leaderboard-ui` (pull latest first — needs B.1's scaffold)
+**Scope:** Create `src/components/leaderboard/EntryCard.svelte`.
 
-`AGENTS.md` claims `static/privacy.html` is excluded from Prettier via `.prettierignore`, but the entry was missing. This caused `npm run format` and `npm run lint` (Prettier check) to fail with a parse error on every run. Fixed by adding the entry (and also excluding `.netlify/` build output).
+Implement the entry card per spec §2.4:
 
-### Pre-existing `npm run lint` (ESLint) failures — 24 errors
+- **Avatar zone:** 48 × 48, `rounded-md`, background-colour fill from `avatarColorHex`, image overlay (`object-cover`), 3 px divider bar on the right using `avatarDividerHex`
+- **Content zone:** username (`text-sm font-bold`), points display (`text-xs font-semibold text-gray-500`, e.g. "+300XP"), metrics row (`flex gap-3`, each chip: 16 px icon + value)
+- **Rank zone** (right-aligned column): trend arrow (▲ green / ▼ red / — grey, 12 px), rank label (`text-sm font-black`, "#1"), optional last-week-winner icon (20 px, category icon with gold ring)
+- **Top-3 accent:** rank 1 → `border-l-4 border-appYellow`, rank 2 → `border-l-4 border-gray-300`, rank 3 → `border-l-4 border-amber-600`
+- **Card container:** `bg-white border border-appGreyBorder rounded-lg p-3 hover:shadow-md transition-shadow`
+- **Props:** accepts an `entry` object (matching `EntryDisplay` shape from spec §4.2) + optional `categoryIconSrc` string
 
-All 24 ESLint errors are pre-existing on `main`. They include TypeScript parse errors in Svelte components (`:` in prop declarations), unused-vars warnings, a11y issues, and an unused svelte-ignore comment. None were introduced by B1 changes.
+**Done when:** `npm run lint` + `npm run check` pass.
 
-### Pre-existing `npm run check` (svelte-check) failures — 11 errors, 4 warnings
+---
 
-All svelte-check errors are pre-existing on `main`. They include missing type annotations, implicit `any` types, properties not existing on `object`, and a possible-null dereference in `+error.svelte`.
+### Task B.3 — Layout components (WeekBanner, CategoryColumn, ColumnsContainer)
+
+**Branch:** `feat/leaderboard-ui` (pull latest first — needs B.1 + B.2)
+**Scope:** Create three files in `src/components/leaderboard/`:
+
+1. **WeekBanner.svelte** (spec §2.2) — Left: "This Week" heading + date range. Right: winners pill badge + optional info icon link. Props: `weekDateRange`, `winnersTimeLabel`, `rulesUrl`.
+
+2. **CategoryColumn.svelte** (spec §2.3 + §1.3) — Sticky column header (32 px icon + label, white bg, bottom border). Scrollable body (`overflow-y: auto`): renders `<ol>` of `EntryCard` or `EmptyState`. Props: accepts a `category` object (matching `CategoryDisplay` shape).
+
+3. **ColumnsContainer.svelte** (spec §1.1 + §6.4) — Horizontal scroll container wrapping slotted children. Flex, `overflow-x: auto`, `scroll-snap-type: x mandatory`, responsive column sizing via `<style>` block (85 vw mobile, 42 vw sm, 30 vw md, 300 px xl).
+
+**Done when:** `npm run lint` + `npm run check` + `npm run build` pass.
+
+---
+
+## Workstream C — Integration & Polish
+
+**Branch:** `feat/leaderboard-page`
+**Depends on:** Workstreams A and B both merged into `main` first.
+**First task creates the branch from `main` (after A + B are merged). Subsequent tasks pull before starting.**
+
+### Task C.1 — Page component + auto-refresh
+
+**Branch:** `feat/leaderboard-page` (create from `main` — after A + B are merged)
+**Scope:** Create `src/routes/leaderboard/+page.svelte`.
+
+- Receive `data.leaderboard` from the server load function
+- Transform via `transformLeaderboard()` in a reactive statement
+- Render: `WeekBanner` → `ColumnsContainer` wrapping `CategoryColumn` for each category
+- Handle loading/error/success states using `LoadingState` and `ErrorState`
+- `onMount`: start 30 s `setInterval` polling `/api/leaderboard`. On success: update data reactively. On failure: do nothing.
+- `onDestroy`: clear interval.
+
+**Done when:** `npm run lint` + `npm run check` + `npm run build` pass. Page renders with live data at `/leaderboard`.
+
+---
+
+### Task C.2 — Navigation link + SEO
+
+**Branch:** `feat/leaderboard-page` (pull latest first)
+**Scope:** Edit two files:
+
+1. **`src/routes/+layout.svelte`** — Add "Leaderboard" link between "Support Me" and "Download" in both desktop nav and mobile menu. Style: `text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold`. Link to `/leaderboard`. Add `on:click={closeMenu}` for mobile.
+
+2. **`src/routes/leaderboard/+page.svelte`** — Add `<SEO title="Leaderboard" />` with Open Graph description: `"See who's leading the art collection game this week."` (spec §6.5).
+
+**Done when:** `npm run lint` + `npm run check` + `npm run build` pass. Nav link visible on all pages.
+
+---
+
+### Task C.3 — Responsive QA + accessibility
+
+**Branch:** `feat/leaderboard-page` (pull latest first)
+**Scope:** Edit `src/routes/leaderboard/+page.svelte` and `src/components/leaderboard/*.svelte` as needed.
+
+**Responsive checks** (spec §1.2):
+
+- Mobile (< 640 px): one column visible, peek of next
+- Tablet (640–1023 px): two columns, peek of third
+- Desktop (1024–1279 px): three columns
+- Wide (≥ 1280 px): four+ columns, 300 px fixed width
+- Week banner adapts to narrow screens (stack vertically if needed)
+
+**Accessibility checks** (spec §6.6):
+
+- Column container: `role="region"`, `aria-label="Leaderboard categories"`, `tabindex="0"`
+- Each column: `role="region"`, `aria-label="{label} leaderboard"`
+- Entry lists: `<ol>` with `<li>` per entry
+- Trend icons: `aria-label="Rank moved up/down/unchanged"`
+- Keyboard navigation: horizontal scroll container focusable and scrollable via arrow keys
+
+Fix any issues found. Run `npm run lint` + `npm run check` + `npm run build`.
+
+**Done when:** All checks pass, layout works at all breakpoints, accessibility attributes are in place.
+
+---
+
+## File Ownership Matrix
+
+| File / Directory                                     | A        | B   | C             |
+| ---------------------------------------------------- | -------- | --- | ------------- |
+| `src/lib/types.ts`                                   | A.1      |     |               |
+| `src/lib/leaderboard.js`                             | A.2, A.3 |     |               |
+| `src/routes/leaderboard/+page.server.js`             | A.4      |     |               |
+| `src/routes/api/leaderboard/+server.js`              | A.4      |     |               |
+| `src/components/leaderboard/EmptyState.svelte`       |          | B.1 |               |
+| `src/components/leaderboard/LoadingState.svelte`     |          | B.1 |               |
+| `src/components/leaderboard/ErrorState.svelte`       |          | B.1 |               |
+| `static/icons/leaderboard/*`                         |          | B.1 |               |
+| `src/components/leaderboard/EntryCard.svelte`        |          | B.2 |               |
+| `src/components/leaderboard/WeekBanner.svelte`       |          | B.3 |               |
+| `src/components/leaderboard/CategoryColumn.svelte`   |          | B.3 |               |
+| `src/components/leaderboard/ColumnsContainer.svelte` |          | B.3 |               |
+| `src/routes/leaderboard/+page.svelte`                |          |     | C.1, C.2, C.3 |
+| `src/routes/+layout.svelte`                          |          |     | C.2           |
+
+---
+
+## Agent Prompt Template
+
+Paste the following into an agent session. Replace `{ID}` with the task ID (e.g. `A.1`, `B.2`, `C.1`) and `{BRANCH}` with the branch name from the task header.
+
+```
+YOUR TASK IS TO EXECUTE TASK {ID}
+
+BEFORE YOU WRITE ANY CODE, set up your branch:
+- If this is the first task on the branch: `git checkout -b {BRANCH} main && git push -u origin {BRANCH}`
+- If this is a subsequent task: `git fetch origin {BRANCH} && git checkout {BRANCH} && git pull origin {BRANCH}`
+This ensures you pick up all commits from previous tasks on this branch.
+
+Study `LEADERBOARD_FEATURE_SPEC.MD` and `docs/FIX_PLAN.md`. Find your task (Task {ID}) in the plan and implement exactly that scope — nothing more, nothing less.
+
+The source code is in `src/`. Study the existing patterns in `src/routes/+page.server.js`, `src/routes/+page.svelte`, and `src/components/` before writing code.
+
+Rules:
+1. Search the codebase before making changes — don't assume something isn't implemented.
+2. After implementing, run `npm run format && npm run lint && npm run check && npm run build`. All must pass.
+3. When done, mark your task complete in `docs/FIX_PLAN.md` (change `[ ]` to `[x]`).
+4. Commit with `git add -A && git commit -m "<descriptive message>"` then `git push`.
+5. If you discover a bug or issue (even unrelated), document it in `docs/FIX_PLAN.md` under a new "## Discovered Issues" section and fix it if quick, otherwise leave it documented.
+6. If you learn something useful about running the project, briefly update `AGENTS.md`.
+7. DO NOT implement placeholder or stub code. Full implementation only.
+8. DO NOT place status updates in `AGENTS.md`.
+9. Follow Svelte 4 / JavaScript / TypeScript conventions matching the existing codebase.
+```
+
+---
+
+## Parallelisation Summary
+
+| Phase       | Tasks           | Parallel?   | Notes           |
+| ----------- | --------------- | ----------- | --------------- |
+| **Phase 1** | A.1 + B.1       | ✅ parallel | Different files |
+| **Phase 2** | A.2 + B.2       | ✅ parallel | Different files |
+| **Phase 3** | A.3 + B.3       | ✅ parallel | Different files |
+| **Phase 4** | A.4             | solo        | Last data task  |
+| **Phase 5** | C.1 → C.2 → C.3 | sequential  | Integration     |
+
+Maximum parallelism: **2 agents at a time** during Phases 1–3.
+Total tasks: **10** (4 + 3 + 3).
+Each task: **one focused commit**.

@@ -1,128 +1,165 @@
 <script>
-    import "../app.css";
-	import CookieConsent from "../components/CookieConsent.svelte";
-    import { isMobile } from "$lib/utils";
-	import SupportButton from "../components/SupportButton.svelte";
-    import InfoCard from "../components/InfoCard.svelte";
-    import IosDownloadButton from "../components/IOSDownloadButton.svelte";
-    import { onMount, onDestroy } from 'svelte';
-	import AndroidWaitlistButton from "../components/AndroidWaitlistButton.svelte";
+	import '../app.css';
+	import CookieConsent from '../components/CookieConsent.svelte';
+	import { ANDROID_WAITLIST_URL, IOS_DOWNLOAD_URL } from '$lib/constants';
+	import { isMobile } from '$lib/utils';
+	import SupportButton from '../components/SupportButton.svelte';
+	import InfoCard from '../components/InfoCard.svelte';
+	import IosDownloadButton from '../components/IOSDownloadButton.svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import AndroidWaitlistButton from '../components/AndroidWaitlistButton.svelte';
 
+	let menuIsOpen = false;
 
-    let menuIsOpen = false
+	let scrollY = 0;
+	let isScrolled = false;
+	let isScrollUpdateQueued = false;
+	/** @type {number | null} */
+	let scrollAnimationFrame = null;
 
-    let scrollY = 0;
-    let isScrolled = false;
+	function toggleMenu() {
+		menuIsOpen = !menuIsOpen;
+	}
 
-    function toggleMenu() {
-        menuIsOpen = !menuIsOpen
-    }
+	function closeMenu() {
+		menuIsOpen = false;
+	}
 
-    function closeMenu() {
-        menuIsOpen = false
-    }
-
-    function clickDownload() {
-        let IOS_DOWNLOAD_URL = "https://apps.apple.com/app/apple-store/id6449506448?pt=122009505&ct=artcollector-web&mt=8"
-        if (isMobile.iOS()) {
+	function clickDownload() {
+		if (isMobile.iOS()) {
 			window.location.replace(IOS_DOWNLOAD_URL);
 		}
-        if (isMobile.Android()) {
-            window.open("https://forms.gle/kHuwRg63drVoTgCF9", '_blank');
-        }
-        closeMenu()
-    }
+		if (isMobile.Android()) {
+			window.open(ANDROID_WAITLIST_URL, '_blank');
+		}
+		closeMenu();
+	}
 
-    const handleScroll = () => {
-        scrollY = window.scrollY;
-        isScrolled = scrollY > 0;
-    };
+	const updateScrollState = () => {
+		scrollY = window.scrollY;
+		isScrolled = scrollY > 0;
+		isScrollUpdateQueued = false;
+		scrollAnimationFrame = null;
+	};
 
-    // Attach the scroll event listener when the component mounts
-    onMount(() => {
-        if (typeof window !== 'undefined') {
-            window.addEventListener('scroll', handleScroll);
-        }
-    });
+	const handleScroll = () => {
+		if (typeof window === 'undefined' || isScrollUpdateQueued) {
+			return;
+		}
 
-    // Clean up the event listener when the component is destroyed
-    onDestroy(() => {
-        if (typeof window !== 'undefined') {
-            window.removeEventListener('scroll', handleScroll);
-        }
-    });
+		isScrollUpdateQueued = true;
+		scrollAnimationFrame = window.requestAnimationFrame(updateScrollState);
+	};
+
+	// Attach the scroll event listener when the component mounts
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			window.addEventListener('scroll', handleScroll);
+			handleScroll();
+		}
+	});
+
+	// Clean up the event listener when the component is destroyed
+	onDestroy(() => {
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('scroll', handleScroll);
+			if (scrollAnimationFrame !== null) {
+				window.cancelAnimationFrame(scrollAnimationFrame);
+			}
+		}
+	});
 </script>
 
-<style>
-    .scrolled {
-        position: fixed;
-    }
-</style>
-
-<header 
-    id="art-collector-header" 
-    class="flex justify-between w-full bg-white main-header absolute border-b-2 border-appGreyBorder"
-    class:scrolled={isScrolled}
+<header
+	id="art-collector-header"
+	class="flex justify-between w-full bg-white main-header absolute border-b-2 border-appGreyBorder"
+	class:scrolled={isScrolled}
 >
 	<div class="p-4 space-x-2 flex flex-wrap content-center">
-        <a href="/">
-            <img 
-                class="block size-10" 
-                alt="Art Collector Logo" 
-                src="/images/logo@0.25x.png"
-            />
-        </a>
+		<a href="/">
+			<img class="block size-10" alt="Art Collector Logo" src="/images/logo@0.25x.png" />
+		</a>
 		<h1 class="text-xl text-black font-black self-center"><a href="/">Art Collector</a></h1>
 	</div>
-    <button class="p-4 md:hidden z-9999" on:click={toggleMenu}>
-        <img class="size-6" alt="button" src="/icons/{menuIsOpen ? "close" : "menu"}.svg" />
-    </button> 
-    <nav class={`p-4 flex ${menuIsOpen ? "translate-x-0 z-9999 top-[60px] fixed w-screen h-screen flex-col text-center space-y-4 bg-background p-16" : "content-center flex-wrap hidden md:block"}`}>  
-        <a on:click={closeMenu} href="/" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
-            Home
-        </a>
-        
-        <a target="_blank" href="https://shop.artcollectorapp.net" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
-            Shop
-        </a>
-        <a target="_blank" href="https://ko-fi.com/artcollectorapp" class="text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
-            Support Me
-        </a>
-        <a on:click={clickDownload} href="/download" class="border-darkBlue hover:bg-darkBlue border-2 font-bold shadow-blue w-full md:max-w-40 max-w-full bg-primary text-xs rounded-md text-white py-2 px-4">
-            Download
-        </a>
-        <a target="_blank" href="https://www.instagram.com/artcollectorapp" class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
-            Instagram
-        </a>
-        <a href="/privacy.html" class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
-            Privacy
-        </a>
-        <a target="_blank" href="https://forms.gle/N3R8maka3Eg8Por27" class="md:hidden text-black/[.64] hover:text-black px-3 py-2 text-sm font-bold">
-            Feedback
-        </a>
-    </nav>
+	<button class="p-4 md:hidden z-9999" on:click={toggleMenu}>
+		<img class="size-6" alt="button" src="/icons/{menuIsOpen ? 'close' : 'menu'}.svg" />
+	</button>
+	<nav
+		class={`p-4 flex ${
+			menuIsOpen
+				? 'translate-x-0 z-9999 top-[60px] fixed w-screen h-screen flex-col text-center space-y-4 bg-appBackground p-16'
+				: 'content-center flex-wrap hidden md:block'
+		}`}
+	>
+		<a
+			on:click={closeMenu}
+			href="/"
+			class="text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
+		>
+			Home
+		</a>
+
+		<a
+			target="_blank"
+			href="https://ko-fi.com/artcollectorapp"
+			class="text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
+		>
+			Support Me
+		</a>
+		<a
+			on:click={clickDownload}
+			href="/download"
+			class="border-darkBlue hover:bg-darkBlue border-2 font-bold shadow-blue w-full md:max-w-40 max-w-full bg-primary text-xs rounded-md text-white py-3 md:py-2 px-4"
+		>
+			Download
+		</a>
+		<a
+			target="_blank"
+			href="https://www.instagram.com/artcollectorapp"
+			class="md:hidden text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
+		>
+			Instagram
+		</a>
+		<a
+			href="/privacy.html"
+			class="md:hidden text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
+		>
+			Privacy
+		</a>
+		<a
+			target="_blank"
+			href="https://forms.gle/N3R8maka3Eg8Por27"
+			class="md:hidden text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold"
+		>
+			Feedback
+		</a>
+	</nav>
 </header>
 <div class="h-[60px] block"></div>
-
 
 <slot />
 
 <footer class="bg-black p-4">
-    <InfoCard
-        title="Your Ticket to an Artistic Adventure"
-        body="Become an early adopter of Art Collector and get the chance to claim the best pieces before anyone else. Join us now, and transform your steps into a canvas of discovery!"
-        imageSrc="/images/ticket2@0.25x.png"
-        imageAlt="ticket to artistic adventure"
-    >
-        <p class="text-sm/loose font-semibold text-white opacity-80 pb-8 md:pb-12">
-            Download today - The first 500 users win an award!
-        </p>
-        <div class="flex space-x-2 justify-center">
-            <IosDownloadButton />
-            <AndroidWaitlistButton compact={true}/>
-        </div>
-    </InfoCard>
-    <SupportButton />
+	<InfoCard
+		title="Your Ticket to an Artistic Adventure"
+		imageSrc="/images/ticket2@0.25x.png"
+		imageAlt="ticket to artistic adventure"
+	>
+		<p class="text-sm/loose font-semibold text-white opacity-80 pb-8 md:pb-12">
+			Download today and start your art collection
+		</p>
+		<div class="flex space-x-2 justify-center">
+			<IosDownloadButton />
+			<AndroidWaitlistButton compact={true} />
+		</div>
+	</InfoCard>
+	<SupportButton />
 </footer>
 
 <CookieConsent />
+
+<style>
+	.scrolled {
+		position: fixed;
+	}
+</style>
