@@ -5,3 +5,6 @@ yarn.lock
 
 # Auto-generated legal page (non-standard HTML tags break Prettier)
 static/privacy.html
+
+# Build output
+.netlify/
