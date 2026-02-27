@@ -124,7 +124,7 @@ Implement and export these pure functions:
 
 ---
 
-### Task A.3 — Response transformer
+### Task A.3 — Response transformer [x]
 
 **Branch:** `feat/leaderboard-data` (pull latest first — needs A.2's utilities)
 **Scope:** Edit `src/lib/leaderboard.js` (append to the file created in A.2).

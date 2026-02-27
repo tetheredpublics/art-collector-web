@@ -163,3 +163,72 @@ export function formatWinnersTime(weekEnding) {
 
 	return `${weekday} ${hours}:${minutes}`;
 }
+
+// ---------------------------------------------------------------------------
+// Response transformer (spec §4.3)
+// ---------------------------------------------------------------------------
+
+const DIVIDER_DARKEN_AMOUNT = 0.26;
+
+/**
+ * Transform a raw leaderboard API response into a display-ready state object.
+ *
+ * @param {LeaderboardResponse} response - Raw API JSON
+ * @returns {LeaderboardDisplayState}
+ */
+export function transformLeaderboard(response) {
+	return {
+		weekDateRange: formatWeekDateRange(response.week_starting, response.week_ending),
+		winnersTimeLabel: formatWinnersTime(response.week_ending),
+		rulesUrl: response.rules_url ?? null,
+		categories: response.categories.map(transformCategory)
+	};
+}
+
+/**
+ * @param {import('$lib/types').LeaderboardCategoryResponse} cat
+ * @returns {CategoryDisplay}
+ */
+function transformCategory(cat) {
+	return {
+		id: cat.category_id,
+		label: cat.label,
+		iconSrc: resolveIconSrc(cat.icon),
+		entries: cat.entries.map((entry) => transformEntry(entry)),
+		emptyTitle: cat.api_empty_message?.title ?? 'No activity in this category yet',
+		emptyBody: cat.api_empty_message?.body ?? 'Be the first to take the lead!'
+	};
+}
+
+/**
+ * @param {import('$lib/types').LeaderboardEntryResponse} entry
+ * @returns {EntryDisplay}
+ */
+function transformEntry(entry) {
+	const avatarColorHex = resolveAvatarColor(entry.avatar_color);
+
+	return {
+		username: entry.username,
+		avatarUrl: entry.avatar_url,
+		avatarColorHex,
+		avatarDividerHex: darkenColor(avatarColorHex, DIVIDER_DARKEN_AMOUNT),
+		rank: entry.rank,
+		rankLabel: `#${entry.rank}`,
+		displayPoints: `+${entry.points * 100}XP`,
+		rankTrend: entry.rank_delta > 0 ? 'up' : entry.rank_delta < 0 ? 'down' : 'same',
+		isLastWeeksWinner: entry.is_last_weeks_winner ?? false,
+		metrics: entry.metrics.map(transformMetric)
+	};
+}
+
+/**
+ * @param {import('$lib/types').LeaderboardMetricResponse} metric
+ * @returns {MetricDisplay}
+ */
+function transformMetric(metric) {
+	return {
+		iconSrc: resolveIconSrc(metric.icon),
+		label: metric.label,
+		value: metric.value
+	};
+}
