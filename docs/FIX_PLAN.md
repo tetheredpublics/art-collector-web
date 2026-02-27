@@ -139,7 +139,7 @@ Implement and export `transformLeaderboard(response)`:
 
 ---
 
-### Task A.3t — Unit tests for response transformer [ ]
+### Task A.3t — Unit tests for response transformer [x]
 
 **Branch:** `feat/leaderboard-data` (pull latest first — needs A.3)
 **Scope:** Add tests to `src/lib/leaderboard.test.js`.

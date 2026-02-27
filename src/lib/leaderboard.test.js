@@ -4,7 +4,8 @@ import {
 	darkenColor,
 	resolveIconSrc,
 	formatWeekDateRange,
-	formatWinnersTime
+	formatWinnersTime,
+	transformLeaderboard
 } from './leaderboard.js';
 
 // ---------------------------------------------------------------------------
@@ -172,5 +173,196 @@ describe('formatWinnersTime', () => {
 	it('pads single-digit hours and minutes', () => {
 		// 2025-05-18 is a Sunday
 		expect(formatWinnersTime('2025-05-18T03:05:00Z')).toBe('Sunday 03:05');
+	});
+});
+
+// ---------------------------------------------------------------------------
+// transformLeaderboard
+// ---------------------------------------------------------------------------
+
+/** @returns {import('$lib/types').LeaderboardResponse} */
+function makeFullResponse() {
+	return {
+		week_starting: '2025-05-12T00:00:00Z',
+		week_ending: '2025-05-19T00:00:00Z',
+		rules_url: 'https://example.com/rules',
+		categories: [
+			{
+				category_id: 'overall',
+				label: 'Overall',
+				icon: 'asset://IconTrophy',
+				api_empty_message: {
+					title: 'Custom empty title',
+					body: 'Custom empty body',
+					icon: 'asset://IconTrophy'
+				},
+				entries: [
+					{
+						username: 'alice',
+						avatar_url: 'https://cdn.example.com/alice.png',
+						avatar_color: 'AppRed',
+						rank: 1,
+						points: 3,
+						rank_delta: 2,
+						is_last_weeks_winner: true,
+						is_current_user: null,
+						metrics: [
+							{ icon: 'asset://icon_collect', label: 'Collected', value: 5 },
+							{ icon: 'asset://icon_drop', label: 'Dropped', value: 1 }
+						]
+					},
+					{
+						username: 'bob',
+						avatar_url: 'https://cdn.example.com/bob.png',
+						avatar_color: 'AppBlue',
+						rank: 2,
+						points: 2,
+						rank_delta: -1,
+						is_last_weeks_winner: false,
+						is_current_user: null,
+						metrics: [{ icon: 'asset://icon_destroy', label: 'Destroyed', value: 3 }]
+					},
+					{
+						username: 'carol',
+						avatar_url: 'https://cdn.example.com/carol.png',
+						avatar_color: 'AppGreen',
+						rank: 3,
+						points: 1,
+						rank_delta: 0,
+						is_last_weeks_winner: null,
+						is_current_user: null,
+						metrics: []
+					}
+				]
+			}
+		]
+	};
+}
+
+describe('transformLeaderboard', () => {
+	it('transforms weekDateRange and winnersTimeLabel', () => {
+		const result = transformLeaderboard(makeFullResponse());
+		expect(result.weekDateRange).toBe('12 – 19 May 2025');
+		expect(result.winnersTimeLabel).toBe('Monday 00:00');
+	});
+
+	it('passes through rulesUrl', () => {
+		const result = transformLeaderboard(makeFullResponse());
+		expect(result.rulesUrl).toBe('https://example.com/rules');
+	});
+
+	it('handles null rulesUrl', () => {
+		const resp = makeFullResponse();
+		resp.rules_url = null;
+		expect(transformLeaderboard(resp).rulesUrl).toBeNull();
+	});
+
+	it('maps category fields correctly', () => {
+		const result = transformLeaderboard(makeFullResponse());
+		expect(result.categories).toHaveLength(1);
+
+		const cat = result.categories[0];
+		expect(cat.id).toBe('overall');
+		expect(cat.label).toBe('Overall');
+		expect(cat.iconSrc).toBe('/icons/leaderboard/trophy.png');
+		expect(cat.emptyTitle).toBe('Custom empty title');
+		expect(cat.emptyBody).toBe('Custom empty body');
+	});
+
+	it('applies empty-message fallbacks when api_empty_message is null', () => {
+		const resp = makeFullResponse();
+		resp.categories[0].api_empty_message = null;
+		const cat = transformLeaderboard(resp).categories[0];
+		expect(cat.emptyTitle).toBe('No activity in this category yet');
+		expect(cat.emptyBody).toBe('Be the first to take the lead!');
+	});
+
+	it('applies empty-message fallback when title is null', () => {
+		const resp = makeFullResponse();
+		resp.categories[0].api_empty_message = { title: null, body: 'Has body', icon: null };
+		const cat = transformLeaderboard(resp).categories[0];
+		expect(cat.emptyTitle).toBe('No activity in this category yet');
+		expect(cat.emptyBody).toBe('Has body');
+	});
+
+	it('transforms entry points as ×100 XP', () => {
+		const entries = transformLeaderboard(makeFullResponse()).categories[0].entries;
+		expect(entries[0].displayPoints).toBe('+300XP');
+		expect(entries[1].displayPoints).toBe('+200XP');
+		expect(entries[2].displayPoints).toBe('+100XP');
+	});
+
+	it('maps rank_delta to trend enum', () => {
+		const entries = transformLeaderboard(makeFullResponse()).categories[0].entries;
+		expect(entries[0].rankTrend).toBe('up'); // rank_delta: 2
+		expect(entries[1].rankTrend).toBe('down'); // rank_delta: -1
+		expect(entries[2].rankTrend).toBe('same'); // rank_delta: 0
+	});
+
+	it('formats rankLabel as #N', () => {
+		const entries = transformLeaderboard(makeFullResponse()).categories[0].entries;
+		expect(entries[0].rankLabel).toBe('#1');
+		expect(entries[1].rankLabel).toBe('#2');
+		expect(entries[2].rankLabel).toBe('#3');
+	});
+
+	it('resolves avatar colour and darkened divider', () => {
+		const entries = transformLeaderboard(makeFullResponse()).categories[0].entries;
+		expect(entries[0].avatarColorHex).toBe('#CF2D2D');
+		expect(entries[0].avatarDividerHex).toBe(darkenColor('#CF2D2D', 0.26));
+		expect(entries[1].avatarColorHex).toBe('#0692E2');
+	});
+
+	it('maps is_last_weeks_winner with null fallback to false', () => {
+		const entries = transformLeaderboard(makeFullResponse()).categories[0].entries;
+		expect(entries[0].isLastWeeksWinner).toBe(true);
+		expect(entries[1].isLastWeeksWinner).toBe(false);
+		expect(entries[2].isLastWeeksWinner).toBe(false); // null → false
+	});
+
+	it('resolves metric icons', () => {
+		const metrics = transformLeaderboard(makeFullResponse()).categories[0].entries[0].metrics;
+		expect(metrics).toHaveLength(2);
+		expect(metrics[0].iconSrc).toBe('/icons/leaderboard/collect.png');
+		expect(metrics[0].label).toBe('Collected');
+		expect(metrics[0].value).toBe(5);
+		expect(metrics[1].iconSrc).toBe('/icons/leaderboard/drop.png');
+	});
+
+	it('handles unknown avatar colour with fallback', () => {
+		const resp = makeFullResponse();
+		resp.categories[0].entries[0].avatar_color = 'UnknownColor';
+		const entry = transformLeaderboard(resp).categories[0].entries[0];
+		expect(entry.avatarColorHex).toBe('#EDEDEA');
+	});
+
+	it('handles unknown icon name with placeholder', () => {
+		const resp = makeFullResponse();
+		resp.categories[0].icon = 'asset://UnknownIcon';
+		const cat = transformLeaderboard(resp).categories[0];
+		expect(cat.iconSrc).toBe('/icons/leaderboard/trophy.png');
+	});
+
+	it('handles category with zero entries', () => {
+		const resp = makeFullResponse();
+		resp.categories[0].entries = [];
+		const cat = transformLeaderboard(resp).categories[0];
+		expect(cat.entries).toHaveLength(0);
+	});
+
+	it('handles multiple categories', () => {
+		const resp = makeFullResponse();
+		resp.categories.push({
+			category_id: 'steps',
+			label: 'Steps',
+			icon: 'asset://icon_steps',
+			api_empty_message: null,
+			entries: []
+		});
+		const result = transformLeaderboard(resp);
+		expect(result.categories).toHaveLength(2);
+		expect(result.categories[1].id).toBe('steps');
+		expect(result.categories[1].iconSrc).toBe('/icons/leaderboard/steps.png');
+		expect(result.categories[1].emptyTitle).toBe('No activity in this category yet');
 	});
 });
