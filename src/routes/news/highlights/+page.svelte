@@ -32,6 +32,7 @@
 							action_icon: newsItem.activity.icon
 						}}
 						normalizeImageAspect={true}
+						imageLoading="lazy"
 					/>
 				</div>
 			{/each}
