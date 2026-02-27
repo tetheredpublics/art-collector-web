@@ -130,7 +130,7 @@ Implement and export `transformLeaderboard(response)`:
 **Branch:** `feat/leaderboard-ui`
 **First task creates the branch from `main`. Subsequent tasks pull before starting.**
 
-### Task B.1 — Scaffold, assets, and simple components
+### Task B.1 — Scaffold, assets, and simple components ✅
 
 **Branch:** `feat/leaderboard-ui` (create from `main`)
 **Scope:** Create `src/components/leaderboard/` directory and the following files:
@@ -144,6 +144,8 @@ Implement and export `transformLeaderboard(response)`:
 4. **ErrorState.svelte** — Error message + "Retry" button. Dispatches a `retry` event. Button styled `bg-primary text-white font-bold rounded-md px-6 py-2`.
 
 **Done when:** `npm run lint` + `npm run check` pass. Components render without errors.
+
+**Status:** Complete. Trophy icon created as SVG placeholder at `static/icons/leaderboard/trophy.svg`. All three components implemented with snapshot tests.
 
 ---
 
@@ -306,3 +308,36 @@ Rules:
 Maximum parallelism: **2 agents at a time** during Phases 1–3.
 Total tasks: **10** (4 + 3 + 3).
 Each task: **one focused commit**.
+
+---
+
+## Snapshot Testing Workflow
+
+Vitest with `@testing-library/svelte` is set up for component snapshot testing. All new UI components in `src/components/leaderboard/` should include snapshot tests.
+
+### Setup
+
+- **Config:** `vitest.config.js` (separate from `vite.config.js` to avoid type conflicts)
+- **Environment:** jsdom
+- **Test location:** `src/components/leaderboard/__tests__/`
+- **Snapshot location:** `src/components/leaderboard/__tests__/__snapshots__/`
+
+### Commands
+
+| Task             | Command               |
+| ---------------- | --------------------- |
+| Run all tests    | `npm run test`        |
+| Watch mode       | `npm run test:watch`  |
+| Update snapshots | `npm run test:update` |
+
+### When to write snapshot tests
+
+Each Workstream B task (B.1, B.2, B.3) should include snapshot tests for the components it creates. At minimum:
+
+- Render with default props → snapshot
+- Render with custom/edge-case props → snapshot
+- Verify key interactive behaviours (events, conditional rendering)
+
+### When to update snapshots
+
+Run `npm run test:update` after intentional markup changes. Review the diff to confirm only expected changes appear.

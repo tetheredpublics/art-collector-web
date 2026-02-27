@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LoadingState > renders with custom message 1`] = `"<div class="flex flex-col items-center justify-center py-24 text-gray-500"><div class="spinner mb-4 svelte-13g0vtj" aria-hidden="true"></div> <p class="text-sm font-semibold">Fetching results…</p></div>"`;
+
+exports[`LoadingState > renders with default message 1`] = `"<div class="flex flex-col items-center justify-center py-24 text-gray-500"><div class="spinner mb-4 svelte-13g0vtj" aria-hidden="true"></div> <p class="text-sm font-semibold">Loading leaderboard…</p></div>"`;

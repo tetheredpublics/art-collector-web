@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmptyState > renders with custom title and body 1`] = `"<div class="flex flex-col items-center justify-center text-center text-gray-400 text-sm py-12 px-4"><p class="font-bold mb-1">No art collected yet</p> <p>Start walking to discover art!</p></div>"`;
+
+exports[`EmptyState > renders with default props 1`] = `"<div class="flex flex-col items-center justify-center text-center text-gray-400 text-sm py-12 px-4"><p class="font-bold mb-1">No activity in this category yet</p> <p>Be the first to take the lead!</p></div>"`;
