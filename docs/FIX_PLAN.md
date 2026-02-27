@@ -64,7 +64,7 @@ Each **task** (e.g. A.1, B.2) is a single, focused agent session that produces o
 **Branch:** `feat/leaderboard-data`
 **First task creates the branch from `main`. Subsequent tasks pull before starting.**
 
-### Task A.1 — TypeScript types
+### Task A.1 — TypeScript types [x]
 
 **Branch:** `feat/leaderboard-data` (create from `main`)
 **Scope:** Edit `src/lib/types.ts` only.
