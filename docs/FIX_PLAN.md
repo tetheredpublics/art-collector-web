@@ -169,7 +169,7 @@ Implement the entry card per spec §2.4:
 
 ---
 
-### Task B.3 — Layout components (WeekBanner, CategoryColumn, ColumnsContainer)
+### Task B.3 — Layout components (WeekBanner, CategoryColumn, ColumnsContainer) ✅
 
 **Branch:** `feat/leaderboard-ui` (pull latest first — needs B.1 + B.2)
 **Scope:** Create three files in `src/components/leaderboard/`:
@@ -181,6 +181,8 @@ Implement the entry card per spec §2.4:
 3. **ColumnsContainer.svelte** (spec §1.1 + §6.4) — Horizontal scroll container wrapping slotted children. Flex, `overflow-x: auto`, `scroll-snap-type: x mandatory`, responsive column sizing via `<style>` block (85 vw mobile, 42 vw sm, 30 vw md, 300 px xl).
 
 **Done when:** `npm run lint` + `npm run check` + `npm run build` pass.
+
+**Status:** Complete. All three layout components implemented with 5 Playwright visual tests.
 
 ---
 

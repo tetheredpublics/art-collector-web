@@ -3,6 +3,9 @@
 	import LoadingState from '../../components/leaderboard/LoadingState.svelte';
 	import ErrorState from '../../components/leaderboard/ErrorState.svelte';
 	import EntryCard from '../../components/leaderboard/EntryCard.svelte';
+	import WeekBanner from '../../components/leaderboard/WeekBanner.svelte';
+	import CategoryColumn from '../../components/leaderboard/CategoryColumn.svelte';
+	import ColumnsContainer from '../../components/leaderboard/ColumnsContainer.svelte';
 
 	/**
 	 * @typedef {'up' | 'down' | 'same'} RankTrend
@@ -75,6 +78,33 @@
 		metrics: [],
 		isLastWeeksWinner: false
 	};
+
+	const mockCategory = {
+		id: 'overall',
+		label: 'Overall',
+		iconSrc: '/icons/leaderboard/trophy.svg',
+		entries: [rank1Entry, rank2Entry, rank3Entry],
+		emptyTitle: 'No activity yet',
+		emptyBody: 'Be the first to take the lead!'
+	};
+
+	const emptyCategory = {
+		id: 'art',
+		label: 'Art',
+		iconSrc: '/icons/collect.png',
+		entries: [],
+		emptyTitle: 'No art activity yet',
+		emptyBody: 'Start collecting to appear here!'
+	};
+
+	const stepsCategory = {
+		id: 'steps',
+		label: 'Steps',
+		iconSrc: '/icons/shoe-print.png',
+		entries: [rank1Entry, rank2Entry],
+		emptyTitle: '',
+		emptyBody: ''
+	};
 </script>
 
 <div class="bg-appBackground p-8 space-y-12 max-w-lg mx-auto font-main">
@@ -127,5 +157,50 @@
 	<section data-testid="entry-card-no-metrics">
 		<h2 class="text-xs font-bold text-gray-400 mb-2 uppercase">EntryCard — no metrics</h2>
 		<EntryCard entry={noMetricsEntry} />
+	</section>
+
+	<section data-testid="week-banner">
+		<h2 class="text-xs font-bold text-gray-400 mb-2 uppercase">WeekBanner</h2>
+		<div class="border border-appGreyBorder rounded-lg overflow-hidden bg-white">
+			<WeekBanner
+				weekDateRange="12 – 18 May 2025"
+				winnersTimeLabel="Friday 00:00"
+				rulesUrl="https://example.com/rules"
+			/>
+		</div>
+	</section>
+
+	<section data-testid="week-banner-no-rules">
+		<h2 class="text-xs font-bold text-gray-400 mb-2 uppercase">WeekBanner — no rules link</h2>
+		<div class="border border-appGreyBorder rounded-lg overflow-hidden bg-white">
+			<WeekBanner weekDateRange="28 Apr – 4 May 2025" winnersTimeLabel="Monday 00:00" />
+		</div>
+	</section>
+
+	<section data-testid="category-column-with-entries">
+		<h2 class="text-xs font-bold text-gray-400 mb-2 uppercase">CategoryColumn — with entries</h2>
+		<div style="width: 320px; height: 500px;">
+			<CategoryColumn category={mockCategory} />
+		</div>
+	</section>
+
+	<section data-testid="category-column-empty">
+		<h2 class="text-xs font-bold text-gray-400 mb-2 uppercase">CategoryColumn — empty</h2>
+		<div style="width: 320px; height: 400px;">
+			<CategoryColumn category={emptyCategory} />
+		</div>
+	</section>
+</div>
+
+<div class="bg-appBackground p-4 font-main">
+	<section data-testid="columns-container">
+		<h2 class="text-xs font-bold text-gray-400 mb-2 uppercase px-4">
+			ColumnsContainer — multi-column layout
+		</h2>
+		<ColumnsContainer>
+			<CategoryColumn category={mockCategory} />
+			<CategoryColumn category={emptyCategory} />
+			<CategoryColumn category={stepsCategory} />
+		</ColumnsContainer>
 	</section>
 </div>

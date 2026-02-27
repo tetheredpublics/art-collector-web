@@ -51,3 +51,28 @@ test('EntryCard — no metrics', async ({ page }) => {
 	const section = page.locator('[data-testid="entry-card-no-metrics"]');
 	await expect(section).toHaveScreenshot('entry-card-no-metrics.png');
 });
+
+test('WeekBanner — with rules link', async ({ page }) => {
+	const section = page.locator('[data-testid="week-banner"]');
+	await expect(section).toHaveScreenshot('week-banner.png');
+});
+
+test('WeekBanner — no rules link', async ({ page }) => {
+	const section = page.locator('[data-testid="week-banner-no-rules"]');
+	await expect(section).toHaveScreenshot('week-banner-no-rules.png');
+});
+
+test('CategoryColumn — with entries', async ({ page }) => {
+	const section = page.locator('[data-testid="category-column-with-entries"]');
+	await expect(section).toHaveScreenshot('category-column-entries.png');
+});
+
+test('CategoryColumn — empty', async ({ page }) => {
+	const section = page.locator('[data-testid="category-column-empty"]');
+	await expect(section).toHaveScreenshot('category-column-empty.png');
+});
+
+test('ColumnsContainer — multi-column layout', async ({ page }) => {
+	const section = page.locator('[data-testid="columns-container"]');
+	await expect(section).toHaveScreenshot('columns-container.png');
+});
