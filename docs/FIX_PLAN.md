@@ -149,7 +149,7 @@ Implement and export `transformLeaderboard(response)`:
 
 ---
 
-### Task B.2 — EntryCard component
+### Task B.2 — EntryCard component ✅
 
 **Branch:** `feat/leaderboard-ui` (pull latest first — needs B.1's scaffold)
 **Scope:** Create `src/components/leaderboard/EntryCard.svelte`.
@@ -164,6 +164,8 @@ Implement the entry card per spec §2.4:
 - **Props:** accepts an `entry` object (matching `EntryDisplay` shape from spec §4.2) + optional `categoryIconSrc` string
 
 **Done when:** `npm run lint` + `npm run check` pass.
+
+**Status:** Complete. EntryCard with all zones (avatar, content, rank), top-3 accents, trend indicators, winner icon, and 14 snapshot/behaviour tests.
 
 ---
 
