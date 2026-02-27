@@ -38,9 +38,15 @@ Each **task** (e.g. A.1, B.2) is a single, focused agent session that produces o
          A.2  Utilities                 B.2  B.3  (parallel OK)
           │                              │   │
           ▼                              └┬──┘
-         A.3  Transformer                │
+         A.2t Unit tests (utilities)     │
           │                              ▼
           ▼                             B.3  Layout components
+         A.3  Transformer
+          │
+          ▼
+         A.3t Unit tests (transformer)
+          │
+          ▼
          A.4  Server routes
           │                              │
           └──────────┬───────────────────┘
@@ -64,7 +70,7 @@ Each **task** (e.g. A.1, B.2) is a single, focused agent session that produces o
 **Branch:** `feat/leaderboard-data`
 **First task creates the branch from `main`. Subsequent tasks pull before starting.**
 
-### Task A.1 — TypeScript types
+### Task A.1 — TypeScript types [x]
 
 **Branch:** `feat/leaderboard-data` (create from `main`)
 **Scope:** Edit `src/lib/types.ts` only.
@@ -78,7 +84,7 @@ Add all leaderboard-related interfaces:
 
 ---
 
-### Task A.2 — Utility functions
+### Task A.2 — Utility functions [x]
 
 **Branch:** `feat/leaderboard-data` (pull latest first)
 **Scope:** Create `src/lib/leaderboard.js`.
@@ -97,7 +103,28 @@ Implement and export these pure functions:
 
 ---
 
-### Task A.3 — Response transformer
+### Task A.2t — Unit tests for utility functions [x]
+
+**Branch:** `feat/leaderboard-data` (pull latest first — needs A.2)
+**Scope:** Set up Vitest and create `src/lib/leaderboard.test.js`.
+
+1. **Test infrastructure** — Install `vitest` as a devDependency. Add `"test": "vitest run"` and `"test:watch": "vitest"` scripts to `package.json`. Add Vitest config to `vite.config.js` via `defineConfig({ test: { ... } })`.
+
+2. **Test cases for `resolveAvatarColor`** — All 13 named keys return correct hex. Unknown key returns fallback `#EDEDEA`. Empty string returns fallback.
+
+3. **Test cases for `darkenColor`** — 0 % returns original, 100 % returns black, 26 % on known colour produces correct mix. Edge: black input stays black.
+
+4. **Test cases for `resolveIconSrc`** — `asset://`, `bundle://`, `system://` prefixes stripped and mapped. HTTP(S) URLs pass through. Unknown bare name returns placeholder. Empty/null returns placeholder.
+
+5. **Test cases for `formatWeekDateRange`** — Same month/year, different months same year, different years. Verify exact output strings.
+
+6. **Test cases for `formatWinnersTime`** — Midnight UTC, mid-day UTC. Verify weekday + `HH:mm` format.
+
+**Done when:** `npm run test` passes, `npm run lint` + `npm run check` + `npm run build` pass.
+
+---
+
+### Task A.3 — Response transformer [x]
 
 **Branch:** `feat/leaderboard-data` (pull latest first — needs A.2's utilities)
 **Scope:** Edit `src/lib/leaderboard.js` (append to the file created in A.2).
@@ -112,7 +139,23 @@ Implement and export `transformLeaderboard(response)`:
 
 ---
 
-### Task A.4 — Server routes
+### Task A.3t — Unit tests for response transformer [x]
+
+**Branch:** `feat/leaderboard-data` (pull latest first — needs A.3)
+**Scope:** Add tests to `src/lib/leaderboard.test.js`.
+
+Test `transformLeaderboard` with:
+
+1. **Full response fixture** — complete API response with multiple categories and entries. Verify all fields mapped correctly (points × 100, rank_delta → trend, colour resolution, icon resolution, date range, winners time).
+2. **Empty categories** — category with zero entries. Verify empty-message fallbacks applied.
+3. **Null/missing optional fields** — `rules_url: null`, `api_empty_message: null`, `is_last_weeks_winner: null`. Verify fallback values.
+4. **Edge cases** — rank_delta positive/negative/zero, unknown avatar colour, unknown icon name.
+
+**Done when:** `npm run test` passes, `npm run lint` + `npm run check` pass.
+
+---
+
+### Task A.4 — Server routes [x]
 
 **Branch:** `feat/leaderboard-data` (pull latest first)
 **Scope:** Create two new files:
@@ -244,22 +287,23 @@ Fix any issues found. Run `npm run lint` + `npm run check` + `npm run build`.
 
 ## File Ownership Matrix
 
-| File / Directory                                     | A        | B   | C             |
-| ---------------------------------------------------- | -------- | --- | ------------- |
-| `src/lib/types.ts`                                   | A.1      |     |               |
-| `src/lib/leaderboard.js`                             | A.2, A.3 |     |               |
-| `src/routes/leaderboard/+page.server.js`             | A.4      |     |               |
-| `src/routes/api/leaderboard/+server.js`              | A.4      |     |               |
-| `src/components/leaderboard/EmptyState.svelte`       |          | B.1 |               |
-| `src/components/leaderboard/LoadingState.svelte`     |          | B.1 |               |
-| `src/components/leaderboard/ErrorState.svelte`       |          | B.1 |               |
-| `static/icons/leaderboard/*`                         |          | B.1 |               |
-| `src/components/leaderboard/EntryCard.svelte`        |          | B.2 |               |
-| `src/components/leaderboard/WeekBanner.svelte`       |          | B.3 |               |
-| `src/components/leaderboard/CategoryColumn.svelte`   |          | B.3 |               |
-| `src/components/leaderboard/ColumnsContainer.svelte` |          | B.3 |               |
-| `src/routes/leaderboard/+page.svelte`                |          |     | C.1, C.2, C.3 |
-| `src/routes/+layout.svelte`                          |          |     | C.2           |
+| File / Directory                                     | A          | B   | C             |
+| ---------------------------------------------------- | ---------- | --- | ------------- |
+| `src/lib/types.ts`                                   | A.1        |     |               |
+| `src/lib/leaderboard.js`                             | A.2, A.3   |     |               |
+| `src/lib/leaderboard.test.js`                        | A.2t, A.3t |     |               |
+| `src/routes/leaderboard/+page.server.js`             | A.4        |     |               |
+| `src/routes/api/leaderboard/+server.js`              | A.4        |     |               |
+| `src/components/leaderboard/EmptyState.svelte`       |            | B.1 |               |
+| `src/components/leaderboard/LoadingState.svelte`     |            | B.1 |               |
+| `src/components/leaderboard/ErrorState.svelte`       |            | B.1 |               |
+| `static/icons/leaderboard/*`                         |            | B.1 |               |
+| `src/components/leaderboard/EntryCard.svelte`        |            | B.2 |               |
+| `src/components/leaderboard/WeekBanner.svelte`       |            | B.3 |               |
+| `src/components/leaderboard/CategoryColumn.svelte`   |            | B.3 |               |
+| `src/components/leaderboard/ColumnsContainer.svelte` |            | B.3 |               |
+| `src/routes/leaderboard/+page.svelte`                |            |     | C.1, C.2, C.3 |
+| `src/routes/+layout.svelte`                          |            |     | C.2           |
 
 ---
 
@@ -295,14 +339,16 @@ Rules:
 
 ## Parallelisation Summary
 
-| Phase       | Tasks           | Parallel?   | Notes           |
-| ----------- | --------------- | ----------- | --------------- |
-| **Phase 1** | A.1 + B.1       | ✅ parallel | Different files |
-| **Phase 2** | A.2 + B.2       | ✅ parallel | Different files |
-| **Phase 3** | A.3 + B.3       | ✅ parallel | Different files |
-| **Phase 4** | A.4             | solo        | Last data task  |
-| **Phase 5** | C.1 → C.2 → C.3 | sequential  | Integration     |
+| Phase       | Tasks           | Parallel?   | Notes                   |
+| ----------- | --------------- | ----------- | ----------------------- |
+| **Phase 1** | A.1 + B.1       | ✅ parallel | Different files         |
+| **Phase 2** | A.2 + B.2       | ✅ parallel | Different files         |
+| **Phase 3** | A.2t + B.3      | ✅ parallel | Tests + UI (no overlap) |
+| **Phase 4** | A.3             | solo        | Transformer             |
+| **Phase 5** | A.3t            | solo        | Transformer tests       |
+| **Phase 6** | A.4             | solo        | Last data task          |
+| **Phase 7** | C.1 → C.2 → C.3 | sequential  | Integration             |
 
 Maximum parallelism: **2 agents at a time** during Phases 1–3.
-Total tasks: **10** (4 + 3 + 3).
+Total tasks: **12** (6 + 3 + 3).
 Each task: **one focused commit**.
