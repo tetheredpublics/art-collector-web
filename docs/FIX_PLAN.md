@@ -1,301 +1,282 @@
 # Fix Plan — Leaderboard Feature
 
-Implementation plan for the `/leaderboard` page, broken into parallel workstreams.
+Implementation plan for the `/leaderboard` page, broken into small focused tasks.
 
 Full feature specification: [`LEADERBOARD_FEATURE_SPEC.MD`](../LEADERBOARD_FEATURE_SPEC.MD)
 
 ---
 
-## Workstream Overview
+## How This Plan Works
+
+Each **task** (e.g. A.1, B.2) is a single, focused agent session that produces one commit. Tasks are small enough that an agent can complete one in a single turn without losing context.
+
+**Rules:**
+
+- Within a workstream, run tasks **sequentially** (A.1 → A.2 → A.3 → A.4).
+- Workstreams A and B have **zero file overlap** — run them in parallel.
+- Workstream C depends on both A and B being complete.
+
+---
+
+## Dependency Graph
 
 ```
-  ┌─────────────────────┐      ┌─────────────────────┐
-  │  WORKSTREAM A       │      │  WORKSTREAM B        │
-  │  Data & API Layer   │      │  UI Components       │
-  │                     │      │                      │
-  │  Types, transforms, │      │  Svelte components,  │
-  │  server load, proxy │      │  layout CSS, assets  │
-  └────────┬────────────┘      └────────┬─────────────┘
-           │                            │
-           │   both must complete       │
-           └──────────┬─────────────────┘
-                      ▼
-           ┌──────────────────────┐
-           │  WORKSTREAM C        │
-           │  Integration & Polish│
-           │                      │
-           │  Page wiring, nav,   │
-           │  auto-refresh, SEO,  │
-           │  responsive QA       │
-           └──────────────────────┘
-```
+         WORKSTREAM A                    WORKSTREAM B
+         (feat/leaderboard-data)         (feat/leaderboard-ui)
 
-**A and B run in parallel.** They touch completely different files — no merge conflicts.
-**C runs after A and B are both merged/complete.** It wires data into components and does end-to-end QA.
+         A.1  Types                      B.1  Scaffold + simple components
+          │                               │
+          ▼                              ┌┴┐
+         A.2  Utilities                 B.2  B.3  (parallel OK)
+          │                              │   │
+          ▼                              └┬──┘
+         A.3  Transformer                │
+          │                              ▼
+          ▼                             B.3  Layout components
+         A.4  Server routes
+          │                              │
+          └──────────┬───────────────────┘
+                     ▼
+              WORKSTREAM C
+              (feat/leaderboard-page)
+
+              C.1  Page wiring + refresh
+               │
+               ▼
+              C.2  Nav link + SEO
+               │
+               ▼
+              C.3  QA + accessibility
+```
 
 ---
 
 ## Workstream A — Data & API Layer
 
 **Branch:** `feat/leaderboard-data`
-**PR title:** `feat: Leaderboard data layer — types, transforms, server load, API proxy`
-**Files touched:** `src/lib/leaderboard.js`, `src/lib/types.ts`, `src/routes/leaderboard/+page.server.js`, `src/routes/api/leaderboard/+server.js`
 
-### Tasks
+### Task A.1 — TypeScript types
 
-- [ ] **A1 — TypeScript types for the API response**
-      Add `LeaderboardResponse`, `LeaderboardCategoryResponse`, `LeaderboardEntryResponse`, and `LeaderboardMetricResponse` interfaces to `src/lib/types.ts`. These model the raw JSON shape from `GET /api/1/collector/4/leaderboard` (see spec §4.1).
+**Scope:** Edit `src/lib/types.ts` only.
 
-- [ ] **A2 — TypeScript types for the display state**
-      Add `LeaderboardDisplayState`, `CategoryDisplay`, `EntryDisplay`, and `MetricDisplay` interfaces to `src/lib/types.ts`. These are the UI-ready shapes (see spec §4.2).
+Add all leaderboard-related interfaces:
 
-- [ ] **A3 — Avatar colour map**
-      In `src/lib/leaderboard.js`, create a `AVATAR_COLOR_MAP` object mapping API colour keys (`"AppRed"`, `"AppBlue"`, …) to their hex values. Include all 13 known keys from the Tailwind config. Fall back to `#EDEDEA` (appGrey) for unknown keys. Export a function `resolveAvatarColor(apiKey: string): string` that returns the hex value.
+- **API response types:** `LeaderboardResponse`, `LeaderboardCategoryResponse`, `LeaderboardEntryResponse`, `LeaderboardMetricResponse` — model the raw JSON from `GET /api/1/collector/4/leaderboard` (spec §4.1)
+- **Display state types:** `LeaderboardDisplayState`, `CategoryDisplay`, `EntryDisplay`, `MetricDisplay` — the UI-ready shapes (spec §4.2)
 
-- [ ] **A4 — Avatar divider colour utility**
-      In `src/lib/leaderboard.js`, export a function `darkenColor(hex: string, amount: number): string` that mixes a hex colour toward black by the given ratio (0–1). Used to compute the 26 %-darkened avatar divider colour. Pure function, no dependencies.
+**Done when:** `npm run check` passes, types are exported.
 
-- [ ] **A5 — Icon asset source resolver**
-      In `src/lib/leaderboard.js`, export a function `resolveIconSrc(iconString: string): string` that handles the `asset://`, `bundle://`, `system://`, `https://`, and bare-name formats. For `asset://` names, look them up in a static `ICON_ASSET_MAP` object (e.g. `{ IconTrophy: '/icons/leaderboard/trophy.png', icon_collect: '/icons/collect.png', ... }`). Unknown asset names resolve to a placeholder path. HTTP(S) URLs pass through unchanged.
+---
 
-- [ ] **A6 — Date range formatter**
-      In `src/lib/leaderboard.js`, export a function `formatWeekDateRange(weekStarting: string, weekEnding: string): string` implementing the three formatting rules from spec §2.2.1:
+### Task A.2 — Utility functions
 
-  - Same month & year → `"12 – 18 May 2025"`
-  - Different months, same year → `"28 Apr – 4 May 2025"`
-  - Different years → `"28 Dec 2024 – 3 Jan 2025"`
-    Use the native `Intl.DateTimeFormat` API — no external date library.
+**Scope:** Create `src/lib/leaderboard.js`.
 
-- [ ] **A7 — Winners time formatter**
-      In `src/lib/leaderboard.js`, export a function `formatWinnersTime(weekEnding: string): string` that formats the week-ending ISO date as `"EEEE HH:mm"` (e.g. `"Friday 00:00"`). Use `Intl.DateTimeFormat` with `{ weekday: 'long' }` and manual `HH:mm` formatting.
+Implement and export these pure functions:
 
-- [ ] **A8 — API response → display state transformer**
-      In `src/lib/leaderboard.js`, export a function `transformLeaderboard(response: LeaderboardResponse): LeaderboardDisplayState` that:
+| Function                                        | Purpose                                                                                                                                                                | Spec ref |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `resolveAvatarColor(apiKey)`                    | Map `"AppRed"` → `"#CF2D2D"` etc. Fallback `#EDEDEA`. Uses a static `AVATAR_COLOR_MAP` of all 13 keys from Tailwind config.                                            | §5.1     |
+| `darkenColor(hex, amount)`                      | Mix a hex colour toward black by ratio (0–1). Returns hex string.                                                                                                      | §5.1     |
+| `resolveIconSrc(iconString)`                    | Parse `asset://`, `bundle://`, `system://`, `https://`, bare-name prefixes. Map known asset names via `ICON_ASSET_MAP`. Unknown → placeholder. HTTP URLs pass through. | §5.2     |
+| `formatWeekDateRange(weekStarting, weekEnding)` | Three formatting rules from spec. Use `Intl.DateTimeFormat`, no external deps.                                                                                         | §2.2.1   |
+| `formatWinnersTime(weekEnding)`                 | Format as `"Friday 00:00"`. Use `Intl.DateTimeFormat`.                                                                                                                 | §2.2     |
 
-  - Formats the date range and winners time (A6, A7)
-  - Maps each category: resolves icon source, applies empty-message fallbacks
-  - Maps each entry: resolves avatar colour + divider, computes `displayPoints` (`points × 100`), computes `rankTrend` from `rank_delta`, resolves metric icons
-  - See the full mapping table in spec §4.3
+**Done when:** `npm run lint` + `npm run check` pass.
 
-- [ ] **A9 — Server-side load function**
-      Create `src/routes/leaderboard/+page.server.js` following the existing patterns in `src/routes/+page.server.js`. Fetch from `${BACKEND_API_URL}/api/1/collector/4/leaderboard` with `Content-Type` and optional `x-api-key` headers. Return `{ leaderboard: <raw JSON> }`. On failure, `throw error(response.status, 'Failed to load leaderboard')`.
+---
 
-- [ ] **A10 — API proxy route for client-side refresh**
-      Create `src/routes/api/leaderboard/+server.js` as a thin `GET` handler that calls the same backend endpoint and pipes the JSON response back. This keeps the API key server-side and avoids CORS issues for the 30 s client-side polling. Return the raw API JSON with a `200` status, or a JSON error body with the upstream status code.
+### Task A.3 — Response transformer
+
+**Scope:** Edit `src/lib/leaderboard.js` (append to the file created in A.2).
+
+Implement and export `transformLeaderboard(response)`:
+
+- Calls the utilities from A.2 to produce a `LeaderboardDisplayState` from raw API JSON
+- Full mapping table is in spec §4.3
+- Key transforms: `points × 100`, `rank_delta` → `"up"/"down"/"same"`, avatar colour + divider, icon resolution, empty-message fallbacks
+
+**Done when:** `npm run lint` + `npm run check` pass.
+
+---
+
+### Task A.4 — Server routes
+
+**Scope:** Create two new files:
+
+1. `src/routes/leaderboard/+page.server.js` — SSR load function. Follow the pattern in `src/routes/+page.server.js`. Fetch `${BACKEND_API_URL}/api/1/collector/4/leaderboard` with `Content-Type` + optional `x-api-key`. Return `{ leaderboard: <raw JSON> }`. On failure: `throw error(status, 'Failed to load leaderboard')`.
+
+2. `src/routes/api/leaderboard/+server.js` — thin GET proxy for client-side 30 s polling. Same backend call, pipes JSON back. Returns `200` with JSON body, or upstream error status.
+
+**Done when:** `npm run lint` + `npm run check` + `npm run build` pass.
 
 ---
 
 ## Workstream B — UI Components
 
 **Branch:** `feat/leaderboard-ui`
-**PR title:** `feat: Leaderboard UI components — columns, cards, banner, layout CSS`
-**Files touched:** `src/components/leaderboard/*.svelte`, `static/icons/leaderboard/*`
 
-All components should accept **display-state types** as props (the `*Display` interfaces from A2), not raw API types. During development before A is merged, use inline JSDoc or simply code against the expected shape from the spec.
+### Task B.1 — Scaffold, assets, and simple components
 
-### Tasks
+**Scope:** Create `src/components/leaderboard/` directory and the following files:
 
-- [ ] **B1 — Scaffold component directory**
-      Create `src/components/leaderboard/` directory.
+1. **Icon assets** — Create `static/icons/leaderboard/` with a `trophy.png` (placeholder OK until real asset available). Confirm existing `collect.png`, `drop.png`, `destroy.png` paths in `static/icons/`.
 
-- [ ] **B2 — EntryCard.svelte**
-      Implement the leaderboard entry card per spec §2.4:
+2. **EmptyState.svelte** — Per-column empty message (spec §2.5). Props: `title`, `body`. Centered text, `py-12`, gray tones.
 
-  - Avatar (48 × 48, rounded-md, background-colour fill, image overlay, right-side divider bar)
-  - Content area: username (bold), points display ("+300XP"), metrics row (icon chips)
-  - Rank area (right-aligned column): trend arrow (▲ green / ▼ red / — grey), rank label ("#1"), last-week-winner icon
-  - Top-3 accent: left border (gold #1, silver #2, bronze #3)
-  - Card container: white bg, border, rounded-lg, p-3, hover:shadow-md
-  - Props: one `EntryDisplay` object + optional `categoryIconSrc` (for winner badge)
+3. **LoadingState.svelte** — Centered spinner. Simple CSS animation, match site aesthetic.
 
-- [ ] **B3 — EmptyState.svelte**
-      Implement the per-column empty state per spec §2.5:
+4. **ErrorState.svelte** — Error message + "Retry" button. Dispatches a `retry` event. Button styled `bg-primary text-white font-bold rounded-md px-6 py-2`.
 
-  - Centered text: title (bold, gray-500) + body (gray-400)
-  - Padding: py-12
-  - Props: `title: string`, `body: string`
+**Done when:** `npm run lint` + `npm run check` pass. Components render without errors.
 
-- [ ] **B4 — CategoryColumn.svelte**
-      Implement a single leaderboard column per spec §2.3 + §1.3:
+---
 
-  - Sticky column header: icon (32 × 32) + label, white bg, bottom border
-  - Scrollable body (`overflow-y: auto`): renders `<ol>` of `EntryCard` components or `EmptyState`
-  - Props: one `CategoryDisplay` object
+### Task B.2 — EntryCard component
 
-- [ ] **B5 — WeekBanner.svelte**
-      Implement the week banner per spec §2.2:
+**Scope:** Create `src/components/leaderboard/EntryCard.svelte`.
 
-  - Left side: "This Week" heading + date range subtitle
-  - Right side: winners pill/badge (trophy icon + "Weekly Winners" + day/time) + optional info icon link
-  - Full-width, horizontally padded
-  - Props: `weekDateRange: string`, `winnersTimeLabel: string`, `rulesUrl: string | null`
+Implement the entry card per spec §2.4:
 
-- [ ] **B6 — Horizontal scroll container CSS**
-      Establish the core layout CSS per spec §1.1 and §6.4:
+- **Avatar zone:** 48 × 48, `rounded-md`, background-colour fill from `avatarColorHex`, image overlay (`object-cover`), 3 px divider bar on the right using `avatarDividerHex`
+- **Content zone:** username (`text-sm font-bold`), points display (`text-xs font-semibold text-gray-500`, e.g. "+300XP"), metrics row (`flex gap-3`, each chip: 16 px icon + value)
+- **Rank zone** (right-aligned column): trend arrow (▲ green / ▼ red / — grey, 12 px), rank label (`text-sm font-black`, "#1"), optional last-week-winner icon (20 px, category icon with gold ring)
+- **Top-3 accent:** rank 1 → `border-l-4 border-appYellow`, rank 2 → `border-l-4 border-gray-300`, rank 3 → `border-l-4 border-amber-600`
+- **Card container:** `bg-white border border-appGreyBorder rounded-lg p-3 hover:shadow-md transition-shadow`
+- **Props:** accepts an `entry` object (matching `EntryDisplay` shape from spec §4.2) + optional `categoryIconSrc` string
 
-  - Flex container with `overflow-x: auto`, `scroll-snap-type: x mandatory`
-  - Column sizing: 85 vw (mobile), 42 vw (sm), 30 vw (md), 300 px (xl)
-  - `scroll-snap-align: start` on each column
-  - `-webkit-overflow-scrolling: touch` for iOS momentum scrolling
-  - This CSS lives in the `+page.svelte` `<style>` block (Workstream C will create the page file, but the CSS spec should be ready). Alternatively, create a thin wrapper component `ColumnsContainer.svelte` in `src/components/leaderboard/` that provides the scroll container and responsive column sizing via slot children.
+**Done when:** `npm run lint` + `npm run check` pass.
 
-- [ ] **B7 — Loading and error state markup**
-      Create `LoadingState.svelte` and `ErrorState.svelte` in `src/components/leaderboard/`:
+---
 
-  - Loading: centered spinner (simple CSS animation or SVG, match site aesthetic)
-  - Error: centered message + "Retry" button (`bg-primary text-white font-bold rounded-md px-6 py-2`). Emits a `retry` event.
+### Task B.3 — Layout components (WeekBanner, CategoryColumn, ColumnsContainer)
 
-- [ ] **B8 — Source / create icon assets**
-  - Confirm that `collect.png`, `drop.png`, `destroy.png` already exist in `static/icons/` — verify paths and names match the asset map in A5.
-  - Create `static/icons/leaderboard/` directory.
-  - Add a `trophy.png` icon for the `IconTrophy` asset name. Source from the app's design assets, or create a simple placeholder until the real asset is available.
-  - Add any other category icons discovered from live API responses. Document unknowns as TODOs.
+**Scope:** Create three files in `src/components/leaderboard/`:
+
+1. **WeekBanner.svelte** (spec §2.2) — Left: "This Week" heading + date range. Right: winners pill badge + optional info icon link. Props: `weekDateRange`, `winnersTimeLabel`, `rulesUrl`.
+
+2. **CategoryColumn.svelte** (spec §2.3 + §1.3) — Sticky column header (32 px icon + label, white bg, bottom border). Scrollable body (`overflow-y: auto`): renders `<ol>` of `EntryCard` or `EmptyState`. Props: accepts a `category` object (matching `CategoryDisplay` shape).
+
+3. **ColumnsContainer.svelte** (spec §1.1 + §6.4) — Horizontal scroll container wrapping slotted children. Flex, `overflow-x: auto`, `scroll-snap-type: x mandatory`, responsive column sizing via `<style>` block (85 vw mobile, 42 vw sm, 30 vw md, 300 px xl).
+
+**Done when:** `npm run lint` + `npm run check` + `npm run build` pass.
 
 ---
 
 ## Workstream C — Integration & Polish
 
 **Branch:** `feat/leaderboard-page`
-**PR title:** `feat: Leaderboard page — integration, auto-refresh, nav link, SEO`
-**Files touched:** `src/routes/leaderboard/+page.svelte`, `src/routes/+layout.svelte`
-**Depends on:** Workstream A (merged) + Workstream B (merged)
+**Depends on:** Workstreams A and B both merged into this branch.
 
-### Tasks
+### Task C.1 — Page component + auto-refresh
 
-- [ ] **C1 — Create the page component**
-      Create `src/routes/leaderboard/+page.svelte` that:
+**Scope:** Create `src/routes/leaderboard/+page.svelte`.
 
-  - Receives `data.leaderboard` from the server load function (A9)
-  - Transforms it via `transformLeaderboard()` (A8) in a reactive statement
-  - Renders the three-section layout: `WeekBanner` → horizontal `ColumnsContainer` with `CategoryColumn` children
-  - Handles loading / error / success states (B7)
+- Receive `data.leaderboard` from the server load function
+- Transform via `transformLeaderboard()` in a reactive statement
+- Render: `WeekBanner` → `ColumnsContainer` wrapping `CategoryColumn` for each category
+- Handle loading/error/success states using `LoadingState` and `ErrorState`
+- `onMount`: start 30 s `setInterval` polling `/api/leaderboard`. On success: update data reactively. On failure: do nothing.
+- `onDestroy`: clear interval.
 
-- [ ] **C2 — Client-side auto-refresh**
-      In `+page.svelte`, set up a 30 s `setInterval` in `onMount` that fetches `/api/leaderboard` (A10). On success, reactively update the leaderboard data. On failure, do nothing (keep stale data on screen). Clear the interval in `onDestroy`.
+**Done when:** `npm run lint` + `npm run check` + `npm run build` pass. Page renders with live data at `/leaderboard`.
 
-- [ ] **C3 — Navigation link**
-      Add a "Leaderboard" link to the site-wide nav in `src/routes/+layout.svelte`:
+---
 
-  - Desktop: between "Support Me" and the "Download" button
-  - Mobile hamburger menu: same position
-  - Link to `/leaderboard`
-  - Style: same as existing nav links (`text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold`)
+### Task C.2 — Navigation link + SEO
 
-- [ ] **C4 — SEO meta tags**
-      Add `<SEO title="Leaderboard" />` and appropriate Open Graph description to the page. See spec §6.5.
+**Scope:** Edit two files:
 
-- [ ] **C5 — Responsive QA**
-      Manually verify the layout at all four breakpoints (mobile, tablet, desktop, wide):
+1. **`src/routes/+layout.svelte`** — Add "Leaderboard" link between "Support Me" and "Download" in both desktop nav and mobile menu. Style: `text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold`. Link to `/leaderboard`. Add `on:click={closeMenu}` for mobile.
 
-  - Horizontal scroll/snap works correctly
-  - Columns size appropriately
-  - Independent vertical scroll within each column
-  - Week banner layout doesn't break on small screens
-  - Entry cards are legible at all sizes
+2. **`src/routes/leaderboard/+page.svelte`** — Add `<SEO title="Leaderboard" />` with Open Graph description: `"See who's leading the art collection game this week."` (spec §6.5).
 
-- [ ] **C6 — Accessibility pass**
-      Verify and fix:
+**Done when:** `npm run lint` + `npm run check` + `npm run build` pass. Nav link visible on all pages.
 
-  - `role="region"` and `aria-label` on column container and individual columns
-  - `<ol>` / `<li>` semantics on entry lists
-  - `aria-label` on trend icons
-  - Keyboard navigability of the horizontal scroll container (`tabindex="0"`)
+---
 
-- [ ] **C7 — Run all checks**
-      Ensure `npm run lint`, `npm run check`, and `npm run build` all pass with zero errors.
+### Task C.3 — Responsive QA + accessibility
+
+**Scope:** Edit `src/routes/leaderboard/+page.svelte` and `src/components/leaderboard/*.svelte` as needed.
+
+**Responsive checks** (spec §1.2):
+
+- Mobile (< 640 px): one column visible, peek of next
+- Tablet (640–1023 px): two columns, peek of third
+- Desktop (1024–1279 px): three columns
+- Wide (≥ 1280 px): four+ columns, 300 px fixed width
+- Week banner adapts to narrow screens (stack vertically if needed)
+
+**Accessibility checks** (spec §6.6):
+
+- Column container: `role="region"`, `aria-label="Leaderboard categories"`, `tabindex="0"`
+- Each column: `role="region"`, `aria-label="{label} leaderboard"`
+- Entry lists: `<ol>` with `<li>` per entry
+- Trend icons: `aria-label="Rank moved up/down/unchanged"`
+- Keyboard navigation: horizontal scroll container focusable and scrollable via arrow keys
+
+Fix any issues found. Run `npm run lint` + `npm run check` + `npm run build`.
+
+**Done when:** All checks pass, layout works at all breakpoints, accessibility attributes are in place.
 
 ---
 
 ## File Ownership Matrix
 
-This table confirms that Workstreams A and B have zero file overlap and can merge independently.
-
-| File / Directory                                     | A   | B   | C   |
-| ---------------------------------------------------- | --- | --- | --- |
-| `src/lib/types.ts`                                   | ✏️  |     |     |
-| `src/lib/leaderboard.js`                             | ✏️  |     |     |
-| `src/routes/leaderboard/+page.server.js`             | ✏️  |     |     |
-| `src/routes/api/leaderboard/+server.js`              | ✏️  |     |     |
-| `src/components/leaderboard/EntryCard.svelte`        |     | ✏️  |     |
-| `src/components/leaderboard/EmptyState.svelte`       |     | ✏️  |     |
-| `src/components/leaderboard/CategoryColumn.svelte`   |     | ✏️  |     |
-| `src/components/leaderboard/WeekBanner.svelte`       |     | ✏️  |     |
-| `src/components/leaderboard/ColumnsContainer.svelte` |     | ✏️  |     |
-| `src/components/leaderboard/LoadingState.svelte`     |     | ✏️  |     |
-| `src/components/leaderboard/ErrorState.svelte`       |     | ✏️  |     |
-| `static/icons/leaderboard/*`                         |     | ✏️  |     |
-| `src/routes/leaderboard/+page.svelte`                |     |     | ✏️  |
-| `src/routes/+layout.svelte`                          |     |     | ✏️  |
+| File / Directory                                     | A        | B   | C             |
+| ---------------------------------------------------- | -------- | --- | ------------- |
+| `src/lib/types.ts`                                   | A.1      |     |               |
+| `src/lib/leaderboard.js`                             | A.2, A.3 |     |               |
+| `src/routes/leaderboard/+page.server.js`             | A.4      |     |               |
+| `src/routes/api/leaderboard/+server.js`              | A.4      |     |               |
+| `src/components/leaderboard/EmptyState.svelte`       |          | B.1 |               |
+| `src/components/leaderboard/LoadingState.svelte`     |          | B.1 |               |
+| `src/components/leaderboard/ErrorState.svelte`       |          | B.1 |               |
+| `static/icons/leaderboard/*`                         |          | B.1 |               |
+| `src/components/leaderboard/EntryCard.svelte`        |          | B.2 |               |
+| `src/components/leaderboard/WeekBanner.svelte`       |          | B.3 |               |
+| `src/components/leaderboard/CategoryColumn.svelte`   |          | B.3 |               |
+| `src/components/leaderboard/ColumnsContainer.svelte` |          | B.3 |               |
+| `src/routes/leaderboard/+page.svelte`                |          |     | C.1, C.2, C.3 |
+| `src/routes/+layout.svelte`                          |          |     | C.2           |
 
 ---
 
 ## Agent Prompt Template
 
-Paste the following into an agent session, replacing `{LETTER}` with `A`, `B`, or `C`.
-
-> **Note:** For Workstream C, ensure Workstreams A and B are merged into the working branch first.
+Paste the following into an agent session, replacing `{ID}` with a task ID like `A.1`, `B.2`, or `C.1`.
 
 ```
-YOUR TASK IS TO EXECUTE WORKSTREAM {LETTER}
+YOUR TASK IS TO EXECUTE TASK {ID}
 
-0a. Study `LEADERBOARD_FEATURE_SPEC.MD` and `docs/FIX_PLAN.md` to learn about the project specifications and implementation plan.
+Study `LEADERBOARD_FEATURE_SPEC.MD` and `docs/FIX_PLAN.md`. Find your task (Task {ID}) in the plan and implement exactly that scope — nothing more, nothing less.
 
-0b. The source code of the project is in `src/`.
+The source code is in `src/`. Study the existing patterns in `src/routes/+page.server.js`, `src/routes/+page.svelte`, and `src/components/` before writing code.
 
-0c. Study `docs/FIX_PLAN.md` — your workstream is **Workstream {LETTER}**. Only implement the tasks listed under that workstream.
-
-1. Your task is to implement the leaderboard feature's Workstream {LETTER} tasks and produce working SvelteKit code for that functionality. Follow `docs/FIX_PLAN.md` and implement all tasks listed under Workstream {LETTER}. Before making changes search the codebase (don't assume something isn't implemented) using subagents. You may use up to 4 parallel subagents for all operations but only 1 subagent for build/tests (SvelteKit/Vite).
-
-2. After implementing functionality or resolving problems, run the checks for that unit of code that was improved (`npm run lint`, `npm run check`, `npm run build`). If functionality is missing then it's your job to add it as per the application specifications. Think hard.
-
-3. When you discover a logic, architecture, or environment issue, immediately update `docs/FIX_PLAN.md` with your findings using a subagent. When the issue is resolved, update `docs/FIX_PLAN.md` and remove the item using a subagent.
-
-4. When the checks pass update `docs/FIX_PLAN.md`, then add changed code and `docs/FIX_PLAN.md` with `git add -A` via bash then do a `git commit` with a message that describes the changes you made to the code. After the commit do a `git push` to push the changes to the remote repository.
-
-5. Important: When authoring documentation capture the "why" — explain why the implementation choices and the backing checks are important.
-
-6. Important: We want single sources of truth, no migrations/adapters. If checks unrelated to your work fail then it's your job to resolve them as part of the increment of change.
-
-8. You may add extra logging if required to be able to debug issues.
-
-9. ALWAYS KEEP `docs/FIX_PLAN.md` up to date with your learnings using a subagent. Especially after wrapping up/finishing your turn.
-
-10. When you learn something new about how to run the project or useful examples, make sure you update `AGENTS.md` using a subagent but keep it brief. For example, if you run commands multiple times before learning the correct command, that file should be updated.
-
-11. IMPORTANT DO NOT IGNORE: The leaderboard feature should be authored in Svelte 4 / JavaScript / TypeScript (matching the existing codebase). If you find any implementation that doesn't follow existing project conventions, migrate it.
-
-12. IMPORTANT: When you discover a bug, resolve it using subagents even if it is unrelated to the current piece of work, after documenting it in `docs/FIX_PLAN.md`.
-
-13. Follow the existing project patterns — study `src/routes/+page.server.js`, `src/routes/+page.svelte`, and `src/components/` for conventions on data loading, component structure, and Tailwind usage.
-
-14. Keep components co-located in `src/components/leaderboard/` with clear, descriptive names.
-
-15. Keep `AGENTS.md` up to date with information on how to build the project and your learnings to optimize the build/check loop using a subagent.
-
-16. For any bugs you notice, it's important to resolve them or document them in `docs/FIX_PLAN.md` to be resolved using a subagent.
-
-17. When authoring components you may author multiple modules at once using up to 4 parallel subagents.
-
-18. When `docs/FIX_PLAN.md` becomes large, periodically clean out the completed items from the file using a subagent.
-
-19. If you find inconsistencies in the `LEADERBOARD_FEATURE_SPEC.MD` then flag them in `docs/FIX_PLAN.md` and proceed with your best judgement.
-
-20. DO NOT IMPLEMENT PLACEHOLDER OR SIMPLE IMPLEMENTATIONS. WE WANT FULL IMPLEMENTATIONS. DO IT OR I WILL YELL AT YOU.
-
-21. SUPER IMPORTANT DO NOT IGNORE: DO NOT PLACE STATUS REPORT UPDATES INTO `AGENTS.md`.
-
-Follow the conventions in `AGENTS.md` and `CONTRIBUTING.md`. Run `npm run format`, `npm run lint`, `npm run check`, and `npm run build` before pushing — all four must pass with zero errors.
+Rules:
+1. Search the codebase before making changes — don't assume something isn't implemented.
+2. After implementing, run `npm run format && npm run lint && npm run check && npm run build`. All must pass.
+3. When done, mark your task complete in `docs/FIX_PLAN.md` (change `[ ]` to `[x]`).
+4. Commit with `git add -A && git commit -m "<descriptive message>"` then `git push`.
+5. If you discover a bug or issue (even unrelated), document it in `docs/FIX_PLAN.md` under a new "## Discovered Issues" section and fix it if quick, otherwise leave it documented.
+6. If you learn something useful about running the project, briefly update `AGENTS.md`.
+7. DO NOT implement placeholder or stub code. Full implementation only.
+8. DO NOT place status updates in `AGENTS.md`.
+9. Follow Svelte 4 / JavaScript / TypeScript conventions matching the existing codebase.
 ```
 
 ---
 
-## Parallelisation Advice
+## Parallelisation Summary
 
-| Group       | Workstreams | Can start immediately | Notes                              |
-| ----------- | ----------- | --------------------- | ---------------------------------- |
-| **Group 1** | A + B       | ✅                    | Zero file overlap — fully parallel |
-| **Group 2** | C           | After Group 1 merges  | Wires A's data into B's components |
+| Phase       | Tasks           | Parallel?   | Notes           |
+| ----------- | --------------- | ----------- | --------------- |
+| **Phase 1** | A.1 + B.1       | ✅ parallel | Different files |
+| **Phase 2** | A.2 + B.2       | ✅ parallel | Different files |
+| **Phase 3** | A.3 + B.3       | ✅ parallel | Different files |
+| **Phase 4** | A.4             | solo        | Last data task  |
+| **Phase 5** | C.1 → C.2 → C.3 | sequential  | Integration     |
 
-**Estimated relative effort:** A ≈ 40 %, B ≈ 40 %, C ≈ 20 %
-
-Workstreams A and B are roughly equal in size and can run as two simultaneous agent sessions. Workstream C is smaller — mostly wiring, a layout link, and QA — but must wait for both A and B.
+Maximum parallelism: **2 agents at a time** during Phases 1–3.
+Total tasks: **10** (4 + 3 + 3).
+Each task: **one focused commit**.
