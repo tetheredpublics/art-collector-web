@@ -36,6 +36,7 @@
 						}}
 						normalizeImageAspect={true}
 						fixedHeightImages={true}
+						imageLoading="lazy"
 					/>
 				</div>
 			{/each}

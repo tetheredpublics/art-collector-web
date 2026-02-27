@@ -5,6 +5,7 @@
 
 	let device: 'ios' | 'android' | 'unknown' = 'unknown';
 	let showSticky = true;
+	let scrollAnimationFrame: number | null = null;
 
 	const isMobile = {
 		Android: () => navigator.userAgent.match(/Android/i),
@@ -13,7 +14,7 @@
 			return this.Android() || this.iOS();
 		}
 	};
-	function handleScroll() {
+	function updateStickyVisibility() {
 		if (typeof window === 'undefined') return;
 
 		const scrollTop = window.scrollY;
@@ -24,6 +25,15 @@
 		showSticky = !atBottom;
 	}
 
+	function handleScroll() {
+		if (typeof window === 'undefined' || scrollAnimationFrame !== null) return;
+
+		scrollAnimationFrame = window.requestAnimationFrame(() => {
+			scrollAnimationFrame = null;
+			updateStickyVisibility();
+		});
+	}
+
 	onMount(() => {
 		if (isMobile.Android()) {
 			device = 'android';
@@ -32,11 +42,14 @@
 		}
 
 		window.addEventListener('scroll', handleScroll);
-		handleScroll(); // call once to set initial state
+		handleScroll();
 	});
 	onDestroy(() => {
 		if (typeof window === 'undefined') return;
 		window.removeEventListener('scroll', handleScroll);
+		if (scrollAnimationFrame !== null) {
+			window.cancelAnimationFrame(scrollAnimationFrame);
+		}
 	});
 </script>
 
