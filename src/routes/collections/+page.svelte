@@ -1,4 +1,5 @@
 <script>
+	import SEO from '../../components/SEO.svelte';
 	import CollectionItem from '../../components/collections/CollectionItem.svelte';
 	let collections = [
 		{
@@ -27,6 +28,8 @@
 		}
 	];
 </script>
+
+<SEO title="Collections" />
 
 <main class="pb-16 md:pb-20 pt-16">
 	<div class="p-4 max-w-4xl mx-auto">

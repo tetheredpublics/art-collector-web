@@ -1,3 +1,9 @@
+<script>
+	import SEO from '../../components/SEO.svelte';
+</script>
+
+<SEO title="Referral Terms" />
+
 <main class="pb-32 pt-16">
 	<div class="p-4 max-w-2xl mx-auto">
 		<div class="mb-8">

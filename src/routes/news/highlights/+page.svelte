@@ -1,8 +1,11 @@
 <script>
+	import SEO from '../../../components/SEO.svelte';
 	import ArtView from '../../../components/ArtView.svelte';
 
 	export let data;
 </script>
+
+<SEO title="Recent Highlights" />
 
 <main class="px-4 py-8 md:px-8 md:py-16 xl:px-16">
 	<div class="mx-auto max-w-6xl">
@@ -32,6 +35,7 @@
 							action_icon: newsItem.activity.icon
 						}}
 						normalizeImageAspect={true}
+						fixedHeightImages={true}
 						imageLoading="lazy"
 					/>
 				</div>
