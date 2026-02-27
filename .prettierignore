@@ -2,3 +2,9 @@
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Auto-generated legal HTML with non-standard tags
+static/privacy.html
+
+# Build output
+.netlify/
