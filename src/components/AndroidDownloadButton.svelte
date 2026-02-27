@@ -28,7 +28,7 @@
 		<p class="text-base/loose font-bold text-link mb-4">
 			<a
 				target="_blank"
-				class="block hover:bg-grey-300"
+				class="block hover:bg-appGrey"
 				href="https://www.instagram.com/artcollectorapp/"
 			>
 				@artcollectorapp

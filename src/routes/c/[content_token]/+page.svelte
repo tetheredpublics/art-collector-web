@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SharedContentPageData } from '$lib/types';
 	import SEO from '../../../components/SEO.svelte';
 	import IosDownloadButton from '../../../components/IOSDownloadButton.svelte';
 	import AndroidDownloadButton from '../../../components/AndroidDownloadButton.svelte';
@@ -6,7 +7,7 @@
 	import AvatarView from '../../../components/AvatarView.svelte';
 	import StickyFooterCta from '../../../components/StickyFooterCta.svelte';
 
-	export let data: any;
+	export let data: SharedContentPageData;
 
 	$: content = data.content;
 	$: error = data.error;
@@ -42,10 +43,10 @@
 			{#if collector}
 				<div class="flex items-center space-x-2 mb-4 px-4">
 					<AvatarView
-						url={collector.avatar_url}
+						url={collector.avatar_url ?? undefined}
 						username={collector.username}
 						size="small"
-						color={collector.avatar_color}
+						color={collector.avatar_color ?? undefined}
 					/>
 					<span class="text-[16px] font-bold leading-[19px] text-black"
 						>{collector.username} shared...</span

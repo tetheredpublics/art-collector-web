@@ -1,4 +1,6 @@
-import { API_KEY, ART_COLLECTOR_API_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+
+const ART_COLLECTOR_API_URL = env.ART_COLLECTOR_API_URL ?? 'http://api.artcollectorapp.net';
 
 export async function load({ params, fetch }) {
 	const { content_token } = params;
@@ -10,7 +12,7 @@ export async function load({ params, fetch }) {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-					'x-api-key': API_KEY
+					...(env.API_KEY ? { 'x-api-key': env.API_KEY } : {})
 				}
 			}
 		);

@@ -1,5 +1,8 @@
 import { error } from '@sveltejs/kit';
-import { BACKEND_API_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+
+const BACKEND_API_URL =
+	env.BACKEND_API_URL ?? 'https://tethered-publics-backend-7twz4.ondigitalocean.app';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {

@@ -7,9 +7,24 @@
 	import { STRINGS } from '$lib';
 
 	export let data;
+
+	const organizationSchema = {
+		'@context': 'https://schema.org',
+		'@type': 'Organization',
+		name: 'Art Collector App',
+		url: 'https://artcollectorapp.net',
+		logo: 'https://artcollectorapp.net/images/logo@0.5x.png',
+		description:
+			'Step into art; Discover, collect, trade and even decide the fate of great art. Download today to join the game!'
+	};
+	const organizationSchemaJson = JSON.stringify(organizationSchema).replace(/</g, '\\u003c');
 </script>
 
 <SEO title="Home" />
+<svelte:head>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html `<script type="application/ld+json">${organizationSchemaJson}</${'script'}>`}
+</svelte:head>
 
 <main>
 	<div class="space-y-8">
@@ -48,6 +63,7 @@
 				body={STRINGS.homeInfo2.body}
 				imageSrc="./images/marketer.png"
 				imageAlt={STRINGS.homeInfo2.imageAlt}
+				imageLoading="lazy"
 				ctaLabel="Recent Highlights"
 				ctaUrl="/news/highlights"
 			/>
@@ -57,6 +73,7 @@
 				body={STRINGS.homeInfo3.body}
 				imageSrc="./images/buildings@0.5x.png"
 				imageAlt={STRINGS.homeInfo3.imageAlt}
+				imageLoading="lazy"
 				ctaLabel="Learn more"
 				ctaUrl="/collections"
 			/>
@@ -66,6 +83,7 @@
 				body={STRINGS.homeInfo1.body}
 				imageSrc="./images/artblock@0.5x.png"
 				imageAlt={STRINGS.homeInfo1.imageAlt}
+				imageLoading="lazy"
 				ctaLabel="Join the Community"
 				ctaUrl="/download"
 			/>

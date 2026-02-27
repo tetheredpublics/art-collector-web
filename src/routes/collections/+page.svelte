@@ -1,4 +1,5 @@
 <script>
+	import SEO from '../../components/SEO.svelte';
 	import CollectionItem from '../../components/collections/CollectionItem.svelte';
 	let collections = [
 		{
@@ -28,6 +29,8 @@
 	];
 </script>
 
+<SEO title="Collections" />
+
 <main class="pb-16 md:pb-20 pt-16">
 	<div class="p-4 max-w-4xl mx-auto">
 		<div class="mb-8">
@@ -45,6 +48,7 @@
 					body={collection.description}
 					imageSrc={collection.image_src}
 					imageAlt={collection.image_alt}
+					imageLoading="lazy"
 					learnMoreUrl={collection.url}
 				/>
 				<!-- <div class="max-w-4xl mx-4 md:mx-auto border-b-appGreyBorder border-b-2"></div> -->

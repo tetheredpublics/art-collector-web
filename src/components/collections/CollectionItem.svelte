@@ -7,6 +7,8 @@
 	export let imageSrc;
 	/** @type {string} */
 	export let imageAlt;
+	/** @type {'eager' | 'lazy'} */
+	export let imageLoading = 'eager';
 	/** @type {string} */
 	export let learnMoreUrl;
 </script>
@@ -14,7 +16,12 @@
 <div
 	class="flex flex-wrap md:flex-nowrap max-w-4xl items-center justify-center mx-auto p-2 md:py-4 space-y-4 md:space-y-0 md:space-x-16"
 >
-	<img class="max-h-64 w-64 max-w-full px-4 md:px-0" src={imageSrc} alt={imageAlt} />
+	<img
+		class="max-h-64 w-64 max-w-full px-4 md:px-0"
+		src={imageSrc}
+		alt={imageAlt}
+		loading={imageLoading}
+	/>
 	<div>
 		<h2 class="text-2xl font-black text-gray-800 mb-2 px-1 md:px-0">
 			{title}

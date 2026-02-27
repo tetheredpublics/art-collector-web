@@ -13,6 +13,9 @@
 
 	let scrollY = 0;
 	let isScrolled = false;
+	let isScrollUpdateQueued = false;
+	/** @type {number | null} */
+	let scrollAnimationFrame = null;
 
 	function toggleMenu() {
 		menuIsOpen = !menuIsOpen;
@@ -32,15 +35,27 @@
 		closeMenu();
 	}
 
-	const handleScroll = () => {
+	const updateScrollState = () => {
 		scrollY = window.scrollY;
 		isScrolled = scrollY > 0;
+		isScrollUpdateQueued = false;
+		scrollAnimationFrame = null;
+	};
+
+	const handleScroll = () => {
+		if (typeof window === 'undefined' || isScrollUpdateQueued) {
+			return;
+		}
+
+		isScrollUpdateQueued = true;
+		scrollAnimationFrame = window.requestAnimationFrame(updateScrollState);
 	};
 
 	// Attach the scroll event listener when the component mounts
 	onMount(() => {
 		if (typeof window !== 'undefined') {
 			window.addEventListener('scroll', handleScroll);
+			handleScroll();
 		}
 	});
 
@@ -48,6 +63,9 @@
 	onDestroy(() => {
 		if (typeof window !== 'undefined') {
 			window.removeEventListener('scroll', handleScroll);
+			if (scrollAnimationFrame !== null) {
+				window.cancelAnimationFrame(scrollAnimationFrame);
+			}
 		}
 	});
 </script>
@@ -69,7 +87,7 @@
 	<nav
 		class={`p-4 flex ${
 			menuIsOpen
-				? 'translate-x-0 z-9999 top-[60px] fixed w-screen h-screen flex-col text-center space-y-4 bg-background p-16'
+				? 'translate-x-0 z-9999 top-[60px] fixed w-screen h-screen flex-col text-center space-y-4 bg-appBackground p-16'
 				: 'content-center flex-wrap hidden md:block'
 		}`}
 	>

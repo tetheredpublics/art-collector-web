@@ -4,14 +4,10 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				background: '#F5F5F1',
 				specialBackground: '#8ED1FC',
 				primary: '#0692E2',
 				link: '#066AAB',
 				specialGreen: '#7BC300',
-				beige: '#EADFD0',
-				grey: '#EDEDEA',
-				greyBorder: '#ADADA9',
 				darkBlue: '#0570AD',
 				// app colors
 				appAmber: '#FB00B8',

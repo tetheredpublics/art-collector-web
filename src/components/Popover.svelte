@@ -1,13 +1,10 @@
 <!-- Popover.svelte -->
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 
 	export let visible = false;
 
-	/**
-	 * @param {HTMLElement} node
-	 */
-	function portal(node) {
+	function portal(node: HTMLElement) {
 		if (typeof document === 'undefined') {
 			return {};
 		}
@@ -26,15 +23,12 @@
 		visible = false;
 	}
 
-	/**
-	 * @param {MouseEvent} event
-	 */
-	function handleClickOutside(event) {
-		if (!(event.target instanceof Element)) {
+	function handleClickOutside(event: MouseEvent) {
+		const target = event.target;
+		if (!(target instanceof Element)) {
 			return;
 		}
-
-		if (!event.target.closest('.popover') && !event.target.closest('.popover-button')) {
+		if (!target.closest('.popover') && !target.closest('.popover-button')) {
 			visible = false;
 		}
 	}
