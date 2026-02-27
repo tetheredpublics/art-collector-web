@@ -1,5 +1,5 @@
 <!-- Popover.svelte -->
-<script>
+<script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { portal } from 'svelte-portal';
 
@@ -9,9 +9,12 @@
 		visible = false;
 	}
 
-	// @ts-ignore
-	function handleClickOutside(event) {
-		if (!event.target.closest('.popover') && !event.target.closest('.popover-button')) {
+	function handleClickOutside(event: MouseEvent) {
+		const target = event.target;
+		if (!(target instanceof Element)) {
+			return;
+		}
+		if (!target.closest('.popover') && !target.closest('.popover-button')) {
 			visible = false;
 		}
 	}
