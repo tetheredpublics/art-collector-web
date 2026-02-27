@@ -6,19 +6,16 @@ This is a SvelteKit 2.x marketing website (Svelte 4, Vite 5, Tailwind CSS 3.4) f
 
 ### Quick reference
 
-| Task          | Command                            |
-| ------------- | ---------------------------------- |
-| Install deps  | `npm install`                      |
-| Dev server    | `npm run dev` (Vite on port 5173)  |
-| Build         | `npm run build`                    |
-| Lint          | `npm run lint` (Prettier + ESLint) |
-| Type check    | `npm run check` (svelte-check)     |
-| Format        | `npm run format`                   |
-| Test          | `npm run test` (Vitest)            |
-| Test (watch)  | `npm run test:watch`               |
-| Update snaps  | `npm run test:update`              |
-| Visual tests  | `npm run test:visual` (Playwright) |
-| Update visual | `npm run test:visual:update`       |
+| Task         | Command                            |
+| ------------ | ---------------------------------- |
+| Install deps | `npm install`                      |
+| Dev server   | `npm run dev` (Vite on port 5173)  |
+| Build        | `npm run build`                    |
+| Lint         | `npm run lint` (Prettier + ESLint) |
+| Type check   | `npm run check` (svelte-check)     |
+| Format       | `npm run format`                   |
+| Test         | `npm run test` (Playwright visual) |
+| Update snaps | `npm run test:update`              |
 
 ### Environment variables
 
@@ -43,7 +40,6 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full branch, commit, and PR con
 ### Notes
 
 - All four checks (`lint`, `check`, `build`, `test`) pass cleanly.
-- Vitest config is in `vitest.config.js` (separate from `vite.config.js` to avoid type conflicts between vitest's vite and the project's vite). Snapshot tests live alongside components in `__tests__/` directories.
 - Playwright visual snapshot tests use `playwright-ct.config.js`. They start the dev server, navigate to `/visual-test`, and take pixel-level screenshots of each component. Baseline PNGs live in `__visual__/__screenshots__/`. Run `npx playwright install chromium` if the browser is not cached.
 - `static/privacy.html` is excluded from Prettier via `.prettierignore` (auto-generated legal HTML with non-standard tags).
 - The `.npmrc` has `engine-strict=true`; Node.js 22+ is required (set in `package.json` engines).

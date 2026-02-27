@@ -313,39 +313,6 @@ Each task: **one focused commit**.
 
 ---
 
-## Snapshot Testing Workflow
-
-Vitest with `@testing-library/svelte` is set up for component snapshot testing. All new UI components in `src/components/leaderboard/` should include snapshot tests.
-
-### Setup
-
-- **Config:** `vitest.config.js` (separate from `vite.config.js` to avoid type conflicts)
-- **Environment:** jsdom
-- **Test location:** `src/components/leaderboard/__tests__/`
-- **Snapshot location:** `src/components/leaderboard/__tests__/__snapshots__/`
-
-### Commands
-
-| Task             | Command               |
-| ---------------- | --------------------- |
-| Run all tests    | `npm run test`        |
-| Watch mode       | `npm run test:watch`  |
-| Update snapshots | `npm run test:update` |
-
-### When to write snapshot tests
-
-Each Workstream B task (B.1, B.2, B.3) should include snapshot tests for the components it creates. At minimum:
-
-- Render with default props → snapshot
-- Render with custom/edge-case props → snapshot
-- Verify key interactive behaviours (events, conditional rendering)
-
-### When to update snapshots
-
-Run `npm run test:update` after intentional markup changes. Review the diff to confirm only expected changes appear.
-
----
-
 ## Visual Snapshot Testing (Playwright)
 
 Pixel-level screenshot tests using Playwright. These render components in a real Chromium browser and compare against baseline PNG images.
@@ -360,15 +327,15 @@ Pixel-level screenshot tests using Playwright. These render components in a real
 
 ### Commands
 
-| Task                    | Command                      |
-| ----------------------- | ---------------------------- |
-| Run visual tests        | `npm run test:visual`        |
-| Update visual baselines | `npm run test:visual:update` |
+| Task             | Command               |
+| ---------------- | --------------------- |
+| Run tests        | `npm run test`        |
+| Update baselines | `npm run test:update` |
 
 ### When to write visual tests
 
-Add visual tests for any new leaderboard UI component. The test route at `/visual-test` should render the component with representative props, and the Playwright test should screenshot the `[data-testid]` section.
+Each Workstream B task should add visual tests for the components it creates. The test route at `/visual-test` should render the component with representative props, and the Playwright test should screenshot the `[data-testid]` section.
 
 ### When to update baselines
 
-Run `npm run test:visual:update` after intentional visual changes. Review the new PNG baselines in the `__screenshots__/` directory before committing.
+Run `npm run test:update` after intentional visual changes. Review the new PNG baselines in the `__screenshots__/` directory before committing.
