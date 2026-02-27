@@ -10,11 +10,19 @@ Full feature specification: [`LEADERBOARD_FEATURE_SPEC.MD`](../LEADERBOARD_FEATU
 
 Each **task** (e.g. A.1, B.2) is a single, focused agent session that produces one commit. Tasks are small enough that an agent can complete one in a single turn without losing context.
 
+**Branching:** One branch per workstream. Sequential tasks within a workstream commit to the same branch. Each agent **must pull the latest before starting** so it picks up the previous task's work.
+
+| Workstream        | Branch                  |
+| ----------------- | ----------------------- |
+| A (Data & API)    | `feat/leaderboard-data` |
+| B (UI Components) | `feat/leaderboard-ui`   |
+| C (Integration)   | `feat/leaderboard-page` |
+
 **Rules:**
 
-- Within a workstream, run tasks **sequentially** (A.1 → A.2 → A.3 → A.4).
-- Workstreams A and B have **zero file overlap** — run them in parallel.
-- Workstream C depends on both A and B being complete.
+- Within a workstream, run tasks **sequentially** (A.1 → A.2 → A.3 → A.4). Each agent pulls the branch first.
+- Workstreams A and B have **zero file overlap** — run them in parallel on separate branches.
+- Workstream C starts after A and B are both merged into `main`. Branch `feat/leaderboard-page` from `main` at that point.
 
 ---
 
@@ -54,9 +62,11 @@ Each **task** (e.g. A.1, B.2) is a single, focused agent session that produces o
 ## Workstream A — Data & API Layer
 
 **Branch:** `feat/leaderboard-data`
+**First task creates the branch from `main`. Subsequent tasks pull before starting.**
 
 ### Task A.1 — TypeScript types
 
+**Branch:** `feat/leaderboard-data` (create from `main`)
 **Scope:** Edit `src/lib/types.ts` only.
 
 Add all leaderboard-related interfaces:
@@ -70,6 +80,7 @@ Add all leaderboard-related interfaces:
 
 ### Task A.2 — Utility functions
 
+**Branch:** `feat/leaderboard-data` (pull latest first)
 **Scope:** Create `src/lib/leaderboard.js`.
 
 Implement and export these pure functions:
@@ -88,6 +99,7 @@ Implement and export these pure functions:
 
 ### Task A.3 — Response transformer
 
+**Branch:** `feat/leaderboard-data` (pull latest first — needs A.2's utilities)
 **Scope:** Edit `src/lib/leaderboard.js` (append to the file created in A.2).
 
 Implement and export `transformLeaderboard(response)`:
@@ -102,6 +114,7 @@ Implement and export `transformLeaderboard(response)`:
 
 ### Task A.4 — Server routes
 
+**Branch:** `feat/leaderboard-data` (pull latest first)
 **Scope:** Create two new files:
 
 1. `src/routes/leaderboard/+page.server.js` — SSR load function. Follow the pattern in `src/routes/+page.server.js`. Fetch `${BACKEND_API_URL}/api/1/collector/4/leaderboard` with `Content-Type` + optional `x-api-key`. Return `{ leaderboard: <raw JSON> }`. On failure: `throw error(status, 'Failed to load leaderboard')`.
@@ -115,9 +128,11 @@ Implement and export `transformLeaderboard(response)`:
 ## Workstream B — UI Components
 
 **Branch:** `feat/leaderboard-ui`
+**First task creates the branch from `main`. Subsequent tasks pull before starting.**
 
 ### Task B.1 — Scaffold, assets, and simple components
 
+**Branch:** `feat/leaderboard-ui` (create from `main`)
 **Scope:** Create `src/components/leaderboard/` directory and the following files:
 
 1. **Icon assets** — Create `static/icons/leaderboard/` with a `trophy.png` (placeholder OK until real asset available). Confirm existing `collect.png`, `drop.png`, `destroy.png` paths in `static/icons/`.
@@ -134,6 +149,7 @@ Implement and export `transformLeaderboard(response)`:
 
 ### Task B.2 — EntryCard component
 
+**Branch:** `feat/leaderboard-ui` (pull latest first — needs B.1's scaffold)
 **Scope:** Create `src/components/leaderboard/EntryCard.svelte`.
 
 Implement the entry card per spec §2.4:
@@ -151,6 +167,7 @@ Implement the entry card per spec §2.4:
 
 ### Task B.3 — Layout components (WeekBanner, CategoryColumn, ColumnsContainer)
 
+**Branch:** `feat/leaderboard-ui` (pull latest first — needs B.1 + B.2)
 **Scope:** Create three files in `src/components/leaderboard/`:
 
 1. **WeekBanner.svelte** (spec §2.2) — Left: "This Week" heading + date range. Right: winners pill badge + optional info icon link. Props: `weekDateRange`, `winnersTimeLabel`, `rulesUrl`.
@@ -166,10 +183,12 @@ Implement the entry card per spec §2.4:
 ## Workstream C — Integration & Polish
 
 **Branch:** `feat/leaderboard-page`
-**Depends on:** Workstreams A and B both merged into this branch.
+**Depends on:** Workstreams A and B both merged into `main` first.
+**First task creates the branch from `main` (after A + B are merged). Subsequent tasks pull before starting.**
 
 ### Task C.1 — Page component + auto-refresh
 
+**Branch:** `feat/leaderboard-page` (create from `main` — after A + B are merged)
 **Scope:** Create `src/routes/leaderboard/+page.svelte`.
 
 - Receive `data.leaderboard` from the server load function
@@ -185,6 +204,7 @@ Implement the entry card per spec §2.4:
 
 ### Task C.2 — Navigation link + SEO
 
+**Branch:** `feat/leaderboard-page` (pull latest first)
 **Scope:** Edit two files:
 
 1. **`src/routes/+layout.svelte`** — Add "Leaderboard" link between "Support Me" and "Download" in both desktop nav and mobile menu. Style: `text-black/[.64] hover:text-black px-3 py-3 md:py-2 text-sm font-bold`. Link to `/leaderboard`. Add `on:click={closeMenu}` for mobile.
@@ -197,6 +217,7 @@ Implement the entry card per spec §2.4:
 
 ### Task C.3 — Responsive QA + accessibility
 
+**Branch:** `feat/leaderboard-page` (pull latest first)
 **Scope:** Edit `src/routes/leaderboard/+page.svelte` and `src/components/leaderboard/*.svelte` as needed.
 
 **Responsive checks** (spec §1.2):
@@ -244,10 +265,15 @@ Fix any issues found. Run `npm run lint` + `npm run check` + `npm run build`.
 
 ## Agent Prompt Template
 
-Paste the following into an agent session, replacing `{ID}` with a task ID like `A.1`, `B.2`, or `C.1`.
+Paste the following into an agent session. Replace `{ID}` with the task ID (e.g. `A.1`, `B.2`, `C.1`) and `{BRANCH}` with the branch name from the task header.
 
 ```
 YOUR TASK IS TO EXECUTE TASK {ID}
+
+BEFORE YOU WRITE ANY CODE, set up your branch:
+- If this is the first task on the branch: `git checkout -b {BRANCH} main && git push -u origin {BRANCH}`
+- If this is a subsequent task: `git fetch origin {BRANCH} && git checkout {BRANCH} && git pull origin {BRANCH}`
+This ensures you pick up all commits from previous tasks on this branch.
 
 Study `LEADERBOARD_FEATURE_SPEC.MD` and `docs/FIX_PLAN.md`. Find your task (Task {ID}) in the plan and implement exactly that scope — nothing more, nothing less.
 
