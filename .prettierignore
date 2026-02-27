@@ -8,3 +8,6 @@ static/privacy.html
 
 # Build output
 .netlify/
+
+# Test output
+test-results/

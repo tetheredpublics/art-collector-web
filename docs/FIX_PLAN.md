@@ -343,3 +343,32 @@ Each Workstream B task (B.1, B.2, B.3) should include snapshot tests for the com
 ### When to update snapshots
 
 Run `npm run test:update` after intentional markup changes. Review the diff to confirm only expected changes appear.
+
+---
+
+## Visual Snapshot Testing (Playwright)
+
+Pixel-level screenshot tests using Playwright. These render components in a real Chromium browser and compare against baseline PNG images.
+
+### Setup
+
+- **Config:** `playwright-ct.config.js`
+- **Test route:** `/visual-test` renders all leaderboard components with mock data
+- **Test files:** `src/components/leaderboard/__visual__/*.visual.js`
+- **Baseline PNGs:** `src/components/leaderboard/__visual__/__screenshots__/`
+- **Browser:** Chromium (install with `npx playwright install chromium`)
+
+### Commands
+
+| Task                    | Command                      |
+| ----------------------- | ---------------------------- |
+| Run visual tests        | `npm run test:visual`        |
+| Update visual baselines | `npm run test:visual:update` |
+
+### When to write visual tests
+
+Add visual tests for any new leaderboard UI component. The test route at `/visual-test` should render the component with representative props, and the Playwright test should screenshot the `[data-testid]` section.
+
+### When to update baselines
+
+Run `npm run test:visual:update` after intentional visual changes. Review the new PNG baselines in the `__screenshots__/` directory before committing.
