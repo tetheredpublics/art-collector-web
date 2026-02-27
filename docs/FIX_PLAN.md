@@ -155,7 +155,7 @@ Test `transformLeaderboard` with:
 
 ---
 
-### Task A.4 — Server routes
+### Task A.4 — Server routes [x]
 
 **Branch:** `feat/leaderboard-data` (pull latest first)
 **Scope:** Create two new files:
