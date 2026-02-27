@@ -78,7 +78,7 @@ Add all leaderboard-related interfaces:
 
 ---
 
-### Task A.2 — Utility functions
+### Task A.2 — Utility functions [x]
 
 **Branch:** `feat/leaderboard-data` (pull latest first)
 **Scope:** Create `src/lib/leaderboard.js`.
