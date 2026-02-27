@@ -1,13 +1,18 @@
+import { error } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
+
+const BACKEND_API_URL =
+	env.BACKEND_API_URL ?? 'https://tethered-publics-backend-7twz4.ondigitalocean.app';
+
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
-	return fetchStats().catch((error) => {
+	return fetchStats().catch(() => {
 		throw error(404, 'Not found');
 	});
 }
 
 async function fetchStats() {
-	let baseUrl = 'https://tethered-publics-backend-7twz4.ondigitalocean.app';
-	const response = await fetch(`${baseUrl}/api/web/collector/stats`, {
+	const response = await fetch(`${BACKEND_API_URL}/api/web/collector/stats`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json'

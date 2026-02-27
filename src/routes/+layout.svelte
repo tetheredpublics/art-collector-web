@@ -1,6 +1,7 @@
 <script>
 	import '../app.css';
 	import CookieConsent from '../components/CookieConsent.svelte';
+	import { ANDROID_WAITLIST_URL, IOS_DOWNLOAD_URL } from '$lib/constants';
 	import { isMobile } from '$lib/utils';
 	import SupportButton from '../components/SupportButton.svelte';
 	import InfoCard from '../components/InfoCard.svelte';
@@ -25,13 +26,11 @@
 	}
 
 	function clickDownload() {
-		let IOS_DOWNLOAD_URL =
-			'https://apps.apple.com/app/apple-store/id6449506448?pt=122009505&ct=artcollector-web&mt=8';
 		if (isMobile.iOS()) {
 			window.location.replace(IOS_DOWNLOAD_URL);
 		}
 		if (isMobile.Android()) {
-			window.open('https://forms.gle/kHuwRg63drVoTgCF9', '_blank');
+			window.open(ANDROID_WAITLIST_URL, '_blank');
 		}
 		closeMenu();
 	}

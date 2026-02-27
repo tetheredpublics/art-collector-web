@@ -1,19 +1,13 @@
 <script lang="ts">
 	import IosDownloadButton from './IOSDownloadButton.svelte';
 	import AndroidWaitlistButton from './AndroidWaitlistButton.svelte';
+	import { isMobile } from '$lib/utils';
 	import { onMount, onDestroy } from 'svelte';
 
 	let device: 'ios' | 'android' | 'unknown' = 'unknown';
 	let showSticky = true;
 	let scrollAnimationFrame: number | null = null;
 
-	const isMobile = {
-		Android: () => navigator.userAgent.match(/Android/i),
-		iOS: () => navigator.userAgent.match(/iPhone|iPad|iPod/i),
-		any: function () {
-			return this.Android() || this.iOS();
-		}
-	};
 	function updateStickyVisibility() {
 		if (typeof window === 'undefined') return;
 

@@ -1,9 +1,23 @@
 <!-- Popover.svelte -->
 <script lang="ts">
-	import { onDestroy } from 'svelte';
-	import { portal } from 'svelte-portal';
+	import { onMount } from 'svelte';
 
 	export let visible = false;
+
+	function portal(node: HTMLElement) {
+		if (typeof document === 'undefined') {
+			return {};
+		}
+
+		document.body.appendChild(node);
+		return {
+			destroy() {
+				if (node.parentNode) {
+					node.parentNode.removeChild(node);
+				}
+			}
+		};
+	}
 
 	function closePopover() {
 		visible = false;
@@ -19,22 +33,17 @@
 		}
 	}
 
-	// Add event listener for handling clicks outside
-	if (typeof window !== 'undefined') {
+	onMount(() => {
 		window.addEventListener('click', handleClickOutside);
-	}
-
-	// Cleanup the event listener
-	onDestroy(() => {
-		if (typeof window !== 'undefined') {
+		return () => {
 			window.removeEventListener('click', handleClickOutside);
-		}
+		};
 	});
 </script>
 
 {#if visible}
 	<div
-		use:portal={'body'}
+		use:portal
 		class="bg-black/50 fixed z-[999] flex justify-center items-center !mx-0 !top-0 !right-0 !bottom-0 !left-0"
 	>
 		<div

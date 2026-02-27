@@ -17,12 +17,14 @@ This is a SvelteKit 2.x marketing website (Svelte 4, Vite 5, Tailwind CSS 3.4) f
 
 ### Environment variables
 
-A `.env` file at the project root is needed with two private keys:
+A `.env` file at the project root can include these private values:
 
 - `API_KEY` — used by `/c/[content_token]` route to call `api.artcollectorapp.net`
 - `MIXPANEL_TOKEN` — used by `/api/mixpanel` endpoint
+- `BACKEND_API_URL` — base URL for homepage stats and `/news/highlights` server-side fetches
+- `ART_COLLECTOR_API_URL` — base URL for `/c/[content_token]` server-side shortlink fetches
 
-Without real values, the homepage and static pages (`/collections`, `/download`, `/referral-terms`) still render correctly. Only the share page (`/c/...`) and analytics endpoint require valid secrets.
+`BACKEND_API_URL` and `ART_COLLECTOR_API_URL` are optional overrides; if omitted, the app falls back to production base URLs. `API_KEY` and `MIXPANEL_TOKEN` are sensitive values; without real secrets, the homepage/static pages still render, but the share page (`/c/...`) and analytics endpoint will fail.
 
 ### Git workflow
 
