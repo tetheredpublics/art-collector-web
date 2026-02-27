@@ -14,6 +14,8 @@ This is a SvelteKit 2.x marketing website (Svelte 4, Vite 5, Tailwind CSS 3.4) f
 | Lint         | `npm run lint` (Prettier + ESLint) |
 | Type check   | `npm run check` (svelte-check)     |
 | Format       | `npm run format`                   |
+| Unit tests   | `npm run test` (Vitest)            |
+| Tests (watch)| `npm run test:watch`               |
 
 ### Environment variables
 
