@@ -1,26 +1,40 @@
-// src/routes/api/
-import mixpanel from 'mixpanel-browser';
+import Mixpanel from 'mixpanel';
 import { json } from '@sveltejs/kit';
-import { MIXPANEL_TOKEN } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
-// Initialize Mixpanel with your server-side token
-mixpanel.init(MIXPANEL_TOKEN);
-
+const mixpanel = env.MIXPANEL_TOKEN ? Mixpanel.init(env.MIXPANEL_TOKEN) : null;
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request }) {
-    const {name, properties} = await request.json();
-    try {
-        mixpanel.track(name, properties);
-        return  json({
-            status: 200,
-            body:{ message: 'Event tracked successfully' }
-        });
-    } catch (error) {
-        return json({
-            status: 500,
-            body: { error: 'Failed to track event' }
-        });
-    }
-}
+	const { name, properties } = await request.json();
 
+	if (!name || typeof name !== 'string') {
+		return json({ error: 'Event name is required' }, { status: 400 });
+	}
+
+	if (!mixpanel) {
+		return json({ message: 'Mixpanel is not configured' }, { status: 202 });
+	}
+
+	try {
+		await new Promise((resolve, reject) => {
+			/**
+			 * @param {Error | null | undefined} trackError
+			 */
+			const onTrack = (trackError) => {
+				if (trackError) {
+					reject(trackError);
+					return;
+				}
+
+				resolve(true);
+			};
+
+			mixpanel.track(name, properties ?? {}, onTrack);
+		});
+
+		return json({ message: 'Event tracked successfully' }, { status: 200 });
+	} catch {
+		return json({ error: 'Failed to track event' }, { status: 500 });
+	}
+}
